@@ -1,30 +1,8 @@
-import torch 
-from torchvision import datasets,transforms
-from sampling import cifar_iid,cifar_noniid
+#Useful libraries
 import copy
-
-
-
-def get_dataset(args):
-    data_dir = '../data/cifar/'
-    apply_transform = transforms.Compose(
-        [transforms.ToTensor(),
-        transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))])
-    train_dataset = datasets.CIFAR10(data_dir, train= True,download=True, 
-                                   transform=apply_transform)
-
-    test_dataset = datasets.CIFAR10(data_dir,train=False,download=True,
-                                  transform=apply_transform)
-    
-    #sample training
-    if args.iid:
-        #sample IID user
-        user_group = cifar_iid(train_dataset,args.num_users)
-    else:
-        #sample Non-IID user
-        user_group = cifar_noniid(train_dataset,args.num_users)
-   
-    return train_dataset, test_dataset, user_group 
+import torch
+from torchvision import datasets,transforms
+from sampling import cifar_iid, cifar_noniid
 
 def exp_details(args):
     print('\nExperimental details:')
@@ -43,6 +21,35 @@ def exp_details(args):
     print(f'    Local Epochs       : {args.local_ep}\n')
     return
 
+def get_dataset(args):
+    #[TODO] Add wrapper for multiple datasets
+    data_dir = '../data/cifar/'
+    
+    #Normalize used with mean and stds of Cifar10
+    apply_transform = transforms.Compose(
+        [transforms.RandomResizedCrop(32),
+         transforms.RandomHorizontalFlip(),
+         transforms.ToTensor(),
+         transforms.Normalize([0.49139968, 0.48215841, 0.44653091], [0.24703223, 0.24348513, 0.26158784])])
+
+    
+    train_dataset = datasets.CIFAR10(data_dir, train= True,download=True, 
+                                   transform=apply_transform)
+
+    test_dataset = datasets.CIFAR10(data_dir,train=False,download=True,
+                                  transform=apply_transform)
+    
+    #sample training
+    if args.iid:
+        #sample IID user
+        user_group = cifar_iid(train_dataset,args.num_users)
+    else:
+        #sample Non-IID user
+        user_group = cifar_noniid(train_dataset,args.num_users)
+   
+    return train_dataset, test_dataset, user_group 
+
+
 def average_weights(w):
     """
     Returns the average of the weights.
@@ -53,5 +60,3 @@ def average_weights(w):
             w_avg[key] += w[i][key]
         w_avg[key] = torch.div(w_avg[key], len(w))
     return w_avg
-
-
