@@ -18,7 +18,6 @@ class DatasetSplit(Dataset):
         image, label = self.dataset[self.idxs[item]]
         return torch.tensor(image), torch.tensor(label)
 
-
 class LocalUpdate(object):
     def __init__(self, args, dataset, idxs):
         self.args = args
@@ -26,7 +25,7 @@ class LocalUpdate(object):
             dataset, list(idxs))
         self.device = 'cuda' if args.gpu else 'cpu'
         # Default criterion set to NLL loss function
-        self.criterion = nn.NLLLoss().to(self.device)
+        self.criterion = nn.CrossEntropyLoss().to(self.device)
 
     def train_val_test(self, dataset, idxs):
         """
@@ -75,11 +74,11 @@ class LocalUpdate(object):
                         global_round, iter, batch_idx * len(images),
                         len(self.trainloader.dataset),
                         100. * batch_idx / len(self.trainloader), loss.item()))
-                self.logger.add_scalar('loss', loss.item())
                 batch_loss.append(loss.item())
             epoch_loss.append(sum(batch_loss)/len(batch_loss))
 
         return model.state_dict(), sum(epoch_loss) / len(epoch_loss)
+    
     def inference(self, model):
         """ Returns the inference accuracy and loss.
         """
@@ -103,6 +102,9 @@ class LocalUpdate(object):
 
         accuracy = correct/total
         return accuracy, loss
+
+
+
 def test_inference(args, model, test_dataset):
     """ Returns the test accuracy and loss.
     """
