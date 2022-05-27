@@ -249,8 +249,16 @@ class GroupNorm32(torch.nn.GroupNorm):
     def __init__(self, num_channels, num_groups=2, **kargs):
         super().__init__(num_groups, num_channels, **kargs)
 
-def ResNet50_server(pretrained = True):
-    return resnet50(pretrained = pretrained, norm_layer = nn.BatchNorm2d)
+def ResNet50_server(pretrained = True, norm_layer = "batch_norm"):
+    if norm_layer == "batch_norm":
+        return resnet50(pretrained = pretrained,norm_layer = nn.BatchNorm2d)
+    elif norm_layer == "group_norm":
+        return resnet50(pretrained = False, norm_layer = GroupNorm32)
 
-def ResNet50_clients(pretrained = False):
-    return resnet50(pretrained = pretrained, norm_layer = nn.BatchNorm2d)
+def ResNet50_clients(pretrained = False, norm_layer = "batch_norm"):
+    if norm_layer == "batch_norm":
+        return resnet50(pretrained = pretrained,norm_layer = nn.BatchNorm2d)
+    elif norm_layer == "group_norm":
+        return resnet50(pretrained = False, norm_layer = GroupNorm32)
+
+

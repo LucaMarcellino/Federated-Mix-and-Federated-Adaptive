@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 #Math Libraries
 import numpy as np
+import pandas as pd
 
 #Pytorch
 import torch
@@ -20,19 +21,11 @@ if __name__ == '__main__':
     args = args_parser()
     exp_details(args)
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = "cuda" if args.gpu != None else "cpu"
     
     train_dataset, test_dataset, user_groups = get_dataset(args)
     
-    global_model = ResNet50_server(pretrained = True)
-
-    '''
-    if args.model == "ResNet50":
-        global_model = ResNet50_server(n_type=args.norm_server)
-    else:
-        exit("Error : unrecognized model")
-    '''
-
+    global_model = ResNet50_server(pretrained = True, norm_layer = args.norm_server)
     global_model.to(device)
 
     train_loss, train_accuracy = [], []
@@ -52,17 +45,17 @@ if __name__ == '__main__':
 
         for idx in idxs_users:
             local_model = LocalUpdate(args=args,dataset=train_dataset,idxs=user_groups[idx])
-            local_resnet = ResNet50_clients(pretrained = False)
+            local_resnet = ResNet50_clients(pretrained = False, norm_layer = args.norm_clients)
             gw = global_model.state_dict()
-            local_resnet.load_state_dict(gw)
-            w, loss = local_model.update_weights(model = local_resnet,
-                                               global_round=epoch)
+            local_resnet.load_state_dict(gw,strict = False)
+            local_resnet.to(device)
+            w, loss = local_model.update_weights(model = local_resnet,global_round=epoch)
             local_weights.append(copy.deepcopy(w))
             local_losses.append(copy.deepcopy(loss))
 
         global_weights = average_weights(local_weights)
 
-        global_model.load_state_dict(global_weights)
+        global_model.load_state_dict(global_weights, strict = False)
 
         loss_avg = sum(local_losses)/len(local_losses)
         train_loss.append(loss_avg)
@@ -82,6 +75,10 @@ if __name__ == '__main__':
             print(f' \nAvg Training Stats after {epoch+1} global rounds:')
             print(f'Training Loss : {np.mean(np.array(train_loss))}')
             print('Train Accuracy: {:.2f}% \n'.format(100*train_accuracy[-1]))
+
+    train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss': np.mean(np.array(train_loss)), 'Train accuracy': np.array(train_accuracy)}
+    train_csv = pd.DataFrame(train_dict)
+    train_csv.to_csv(f'FedAVG_BatchNorm_non-iid_lr:0.01_mom:0.9_epochs:10.csv', index = False)
 
     # Test inference after completion of training
     test_acc, test_loss = test_inference(args, global_model, test_dataset)

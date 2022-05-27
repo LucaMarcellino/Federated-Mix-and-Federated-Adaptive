@@ -16,7 +16,7 @@ class DatasetSplit(Dataset):
 
     def __getitem__(self, item):
         image, label = self.dataset[self.idxs[item]]
-        return torch.tensor(image), torch.tensor(label)
+        return torch.tensor(image),torch.tensor(label)
 
 class LocalUpdate(object):
     def __init__(self, args, dataset, idxs):
@@ -88,7 +88,6 @@ class LocalUpdate(object):
 
         for batch_idx, (images, labels) in enumerate(self.testloader):
             images, labels = images.to(self.device), labels.to(self.device)
-
             # Inference
             outputs = model(images)
             batch_loss = self.criterion(outputs, labels)
@@ -113,8 +112,9 @@ def test_inference(args, model, test_dataset):
     loss, total, correct = 0.0, 0.0, 0.0
 
     device = 'cuda' if args.gpu else 'cpu'
-    criterion = nn.NLLLoss().to(device)
-    testloader = DataLoader(test_dataset, batch_size=128,
+    criterion = nn.CrossEntropyLoss().to(device)
+
+    testloader = DataLoader(test_dataset, batch_size=args.local_bs,
                             shuffle=False)
 
     for batch_idx, (images, labels) in enumerate(testloader):
