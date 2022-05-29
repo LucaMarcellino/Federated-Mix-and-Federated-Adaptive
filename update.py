@@ -53,7 +53,7 @@ class LocalUpdate(object):
         # Set optimizer for the local updates
         if self.args.optimizer == 'sgd':
             optimizer = torch.optim.SGD(model.parameters(), lr=self.args.lr,
-                                        momentum=0.5)
+                                        momentum=self.args.momentum)
         elif self.args.optimizer == 'adam':
             optimizer = torch.optim.Adam(model.parameters(), lr=self.args.lr,
                                          weight_decay=1e-4)
@@ -96,8 +96,12 @@ class LocalUpdate(object):
             # Prediction
             _, pred_labels = torch.max(outputs, 1)
             pred_labels = pred_labels.view(-1)
+            print(pred_labels)
+            print(labels)
             correct += torch.sum(torch.eq(pred_labels, labels)).item()
             total += len(labels)
+            print("Correct predictions: {}".format(correct))
+            print("Total labels: {}".format(total))
 
         accuracy = correct/total
         return accuracy, loss

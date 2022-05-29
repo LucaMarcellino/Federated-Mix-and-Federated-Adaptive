@@ -13,7 +13,7 @@ import torch.nn as nn
 from options import args_parser 
 from utils import exp_details, get_dataset, average_weights
 from update import LocalUpdate, DatasetSplit, test_inference
-from models import ResNet50_server,ResNet50_clients
+from mix_models import ResNet50
 from torchvision import models
 
 if __name__ == '__main__':
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     
     train_dataset, test_dataset, user_groups = get_dataset(args)
     
-    global_model = ResNet50_server(pretrained = True, norm_layer = args.norm_server)
+    global_model = ResNet50(alpha_b = 0.9, alpha_g = 0.1)
     global_model.to(device)
 
     train_loss, train_accuracy = [], []
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
         for idx in idxs_users:
             local_model = LocalUpdate(args=args,dataset=train_dataset,idxs=user_groups[idx])
-            local_resnet = ResNet50_clients(pretrained = False, norm_layer = args.norm_clients)
+            local_resnet = ResNet50(alpha_b = 0.1, alpha_g = 0.9)
             gw = global_model.state_dict()
             local_resnet.load_state_dict(gw,strict = False)
             local_resnet.to(device)
@@ -84,9 +84,6 @@ if __name__ == '__main__':
     print("|---- Test Accuracy: {:.2f}%".format(100*test_acc))
 
     
-    train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss': np.mean(np.array(train_loss)), 'Train accuracy': np.array(train_accuracy)}
-    train_csv = pd.DataFrame(train_dict)
-    train_csv.to_csv(f'FedAVG_C:{args.norm_clients}_S:{args.norm_server}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
 
 
 
