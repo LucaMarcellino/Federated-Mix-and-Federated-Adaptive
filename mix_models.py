@@ -74,7 +74,7 @@ class BasicBlock(nn.Module):
         out = self.conv1(x)
         out1 = self.nlb1(out)
         out2 = self.nlg1(out)
-        out = out1*self.alpha_g + out2*self.alpha_g
+        out = out1*self.alpha_b + out2*self.alpha_g
         out = self.relu(out)
         out = self.conv2(out)
         out1 = self.nlb2(out)
