@@ -100,8 +100,8 @@ class Bottleneck(nn.Module):
 
     expansion = 4
 
-    def __init__(self, inplanes, planes, alpha_b = 0.9, alpha_g = 0.1, stride=1, downsample=None, groups=1,
-                 base_width=64, dilation=1):
+    def __init__(self, inplanes, planes,stride=1, downsample=None, groups=1,
+                 base_width=64, dilation=1, alpha_b = 0.9, alpha_g = 0.1):
         super(Bottleneck, self).__init__()
         #if norm_layer is None:
         #    norm_layer = nn.BatchNorm2d
@@ -163,7 +163,7 @@ class Bottleneck(nn.Module):
 # ResNet50 architecture for CIFAR-10 (images of size 32*32*3)
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers,alpha_b = 0.9, alpha_g = 0.1, num_classes=1000, zero_init_residual=False,
+    def __init__(self, block, layers,alpha_b = 0.9, alpha_g = 0.1, num_classes=10, zero_init_residual=False,
                  groups=1, width_per_group=64, replace_stride_with_dilation=None):
         super(ResNet, self).__init__()
         self.batch_norm = nn.BatchNorm2d
@@ -233,11 +233,11 @@ class ResNet(nn.Module):
 
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample, self.groups,
-                            self.base_width, previous_dilation))
+                            self.base_width, previous_dilation, alpha_b= self.alpha_b, alpha_g= self.alpha_g))
         self.inplanes = planes * block.expansion
         for _ in range(1, blocks):
             layers.append(block(self.inplanes, planes, groups=self.groups,
-                                base_width=self.base_width, dilation=self.dilation))
+                                base_width=self.base_width, dilation=self.dilation, alpha_b = self.alpha_b, alpha_g= self.alpha_g ))
 
         return nn.Sequential(*layers)
 
@@ -274,7 +274,6 @@ def _resnet(arch, block, layers, pretrained, progress, alpha_b = 0.9, alpha_g = 
 def resnet50(pretrained=False, progress=True, alpha_b = 0.9, alpha_g = 0.1, **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
-
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr

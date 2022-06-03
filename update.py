@@ -96,12 +96,8 @@ class LocalUpdate(object):
             # Prediction
             _, pred_labels = torch.max(outputs, 1)
             pred_labels = pred_labels.view(-1)
-            print(pred_labels)
-            print(labels)
             correct += torch.sum(torch.eq(pred_labels, labels)).item()
             total += len(labels)
-            print("Correct predictions: {}".format(correct))
-            print("Total labels: {}".format(total))
 
         accuracy = correct/total
         return accuracy, loss
