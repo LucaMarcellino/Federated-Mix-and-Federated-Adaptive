@@ -88,7 +88,7 @@ if __name__ == "__main__":
 	# get lists of train loss and accuracy
 	train_loss, train_accuracy = server_trainer.get_loss_acc_list()
 
-	file_name = 'data/seed:{}_{}_{}_{}_lr_[{}]_C[{}]_iid[{}]_Es[{}]_Ec[{}]_B[{}]_{}_unbalanced[{}].csv'.\
+	file_name = 'seed:{}_{}_{}_{}_lr_[{}]_C[{}]_iid[{}]_Es[{}]_Ec[{}]_B[{}]_{}_unbalanced[{}].csv'.\
     format(args.seed,"ResNet50", norm_type, args.communication_rounds, args.lr, args.frac, args.iid,
            args.epochs, args.local_ep, args.local_bs, args.optimizer, args.unequal)
 
