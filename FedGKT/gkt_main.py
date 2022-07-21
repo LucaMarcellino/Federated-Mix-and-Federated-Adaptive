@@ -92,7 +92,7 @@ if __name__ == "__main__":
     format(args.seed,"ResNet50", norm_type, args.communication_rounds, args.lr, args.frac, args.iid,
            args.epochs, args.local_ep, args.local_bs, args.optimizer, args.unequal)
 
-	data = list(zip(train_loss, train_accuracy))
+	data = list(zip(range(args.communication_rounds),train_loss, train_accuracy))
 	result = pd.DataFrame(data, columns=['Communication_round','train_loss','train_accuracy'])
 	result.to_csv(file_name)
 
