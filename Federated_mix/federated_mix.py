@@ -82,6 +82,10 @@ if __name__ == '__main__':
     print(f' \n Results after {args.epochs} global rounds of training:')
     print("|---- Avg Train Accuracy: {:.2f}%".format(100*train_accuracy[-1]))
     print("|---- Test Accuracy: {:.2f}%".format(100*test_acc))
+    
+    train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss': np.mean(np.array(train_loss)), 'Train accuracy': np.array(train_accuracy)}
+    train_csv = pd.DataFrame(train_dict)
+    train_csv.to_csv(f'FedAVG_C:{args.norm_clients}_S:{args.norm_server}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
 
     
 
