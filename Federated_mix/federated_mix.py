@@ -25,7 +25,7 @@ if __name__ == '__main__':
     
     train_dataset, test_dataset, user_groups = get_dataset(args)
     
-    global_model = ResNet50(alpha_b = 0.5, alpha_g = 0.5)
+    global_model = ResNet50(alpha_b = 0.1, alpha_g = 0.9)
     global_model.to(device)
 
     train_loss, train_accuracy = [], []
