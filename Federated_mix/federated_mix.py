@@ -16,6 +16,9 @@ from update import LocalUpdate, DatasetSplit, test_inference
 from mix_models import ResNet50
 from torchvision import models
 
+alpha_b = 0.9
+alpha_g = 0.1
+
 if __name__ == '__main__':
     
     args = args_parser()
@@ -25,12 +28,13 @@ if __name__ == '__main__':
     
     train_dataset, test_dataset, user_groups = get_dataset(args)
     
-    global_model = ResNet50(alpha_b = 0.1, alpha_g = 0.9)
+    global_model = ResNet50(alpha_b = alpha_b, alpha_g = alpha_g)
     global_model.to(device)
 
     train_loss, train_accuracy = [], []
     val_acc_list, net_list = [],[]
     cv_loss, cv_acc = [], []
+    test_accur, test_losses = [],[]
     print_every = 20
     val_loss_pre, counter = 0, 0
 
@@ -76,16 +80,19 @@ if __name__ == '__main__':
             print(f'Training Loss : {np.mean(np.array(train_loss))}')
             print('Train Accuracy: {:.2f}% \n'.format(100*train_accuracy[-1]))
 
-    # Test inference after completion of training
-    test_acc, test_loss = test_inference(args, global_model, test_dataset)
+	    # Test inference after completion of training
+        test_acc, test_loss = test_inference(args, global_model, test_dataset)
+        test_accur.append(test_acc)
+        test_losses.append(test_loss)
 
     print(f' \n Results after {args.epochs} global rounds of training:')
     print("|---- Avg Train Accuracy: {:.2f}%".format(100*train_accuracy[-1]))
     print("|---- Test Accuracy: {:.2f}%".format(100*test_acc))
-    
-    train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss': np.mean(np.array(train_loss)), 'Train accuracy': np.array(train_accuracy)}
+
+    train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss Average' : np.array(train_loss),'Train Accuracy' : np.array(train_accuracy),'Test Loss': np.array(test_loss), 'Test accuracy': np.array(test_acc)}
     train_csv = pd.DataFrame(train_dict)
-    train_csv.to_csv(f'FedAVG_C:{args.norm_clients}_S:{args.norm_server}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
+    train_csv.to_csv(f'FedMix_Norm:{args.norm_clients}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}_alphaB:{alpha_b}_alphaG:{alpha_g}.csv', index = False)
+
 
     
 
