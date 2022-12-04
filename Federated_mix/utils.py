@@ -20,8 +20,8 @@ def exp_details(args):
     print(f'    Local Batch size   : {args.local_bs}')
     print(f'    Local Epochs       : {args.local_ep}\n')
     print('\nMixed Parameters:')
-    print(f'Alpha Batch : {args.alpha_b}')
-    print(f'Alpha Group : {args.alpha_g}')
+    print(f'    Alpha Batch : {args.alpha_b}')
+    print(f'    Alpha Group : {args.alpha_g}')
     return
 
 def get_dataset(args):
