@@ -16,8 +16,7 @@ from update import LocalUpdate, DatasetSplit, test_inference
 from mix_models import ResNet50
 from torchvision import models
 
-alpha_b = 0.9
-alpha_g = 0.1
+
 
 if __name__ == '__main__':
     
@@ -31,6 +30,9 @@ if __name__ == '__main__':
     
     train_dataset, test_dataset, user_groups = get_dataset(args)
     testloader = torch.utils.data.DataLoader(test_dataset, batch_size=args.local_bs, shuffle=False, num_workers=2, generator=g)
+
+    alpha_b = args.alpha_b
+    alpha_g = args.alpha_g
     
     global_model = ResNet50(alpha_b = alpha_b, alpha_g = alpha_g)
     global_model.to(device)
