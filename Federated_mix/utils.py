@@ -19,10 +19,12 @@ def exp_details(args):
     print(f'    Fraction of users  : {args.frac}')
     print(f'    Local Batch size   : {args.local_bs}')
     print(f'    Local Epochs       : {args.local_ep}\n')
+    print('\nMixed Parameters:')
+    print(f'Alpha Batch : {args.alpha_b}')
+    print(f'Alpha Group : {args.alpha_g}')
     return
 
 def get_dataset(args):
-    #[TODO] Add wrapper for multiple datasets
     data_dir = '../data/cifar/'
     
     #Normalize used with mean and stds of Cifar10
