@@ -57,7 +57,8 @@ if __name__ == '__main__':
 
         for idx in idxs_users:
             local_model = LocalUpdate(args=args,dataset=train_dataset,idxs=user_groups[idx])
-            local_resnet = ResNet50(alpha_b = 1-alpha_b, alpha_g = 1-alpha_g)
+            #local_resnet = ResNet50(alpha_b = 1-alpha_b, alpha_g = 1-alpha_g)
+            local_resnet = ResNet50(alpha_b = alpha_b, alpha_g = alpha_g)
             gw = global_model.state_dict()
             local_resnet.load_state_dict(gw, strict = False)
             local_resnet.to(device)
