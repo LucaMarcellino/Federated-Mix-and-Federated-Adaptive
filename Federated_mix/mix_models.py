@@ -135,9 +135,10 @@ class Bottleneck(nn.Module):
         out = self.conv1(x)
         out1 = self.nlb1(out)
         out2 = self.nlb2(out)
-        out1 = torch.mul(out1,self.alpha_b)
-        out2 = torch.mul(out2,self.alpha_g)
-        out = torch.add(out1,out2)
+        out = out1 * self.alpha_b + out2 * self.alpha_g
+        #out1 = torch.mul(out1,self.alpha_b)
+        #out2 = torch.mul(out2,self.alpha_g)
+        #out = torch.add(out1,out2)
         out = self.relu(out)
 
         out = self.conv2(out)

@@ -26,20 +26,26 @@ if __name__ == '__main__':
 
     device = "cuda" if args.gpu != None else "cpu"
     
+    loss_fn = torch.nn.CrossEntropyLoss()
+    g = torch.Generator()
+    
     train_dataset, test_dataset, user_groups = get_dataset(args)
+    testloader = torch.utils.data.DataLoader(test_dataset, batch_size=args.local_bs, shuffle=False, num_workers=2, generator=g)
     
     global_model = ResNet50(alpha_b = alpha_b, alpha_g = alpha_g)
     global_model.to(device)
 
     train_loss, train_accuracy = [], []
+    train_loss_avg = []
     val_acc_list, net_list = [],[]
     cv_loss, cv_acc = [], []
-    test_accur, test_losses = [],[]
+    test_accuracy, test_losses = [],[]
+    test_loss_avg = []
     print_every = 20
     val_loss_pre, counter = 0, 0
 
     for epoch in tqdm(range(args.epochs)):
-        local_weights, local_losses = [], []
+        local_weights, local_losses, global_losses = [], [], []
         print(f'\n | Global Training Round : {epoch+1} |\n')
 
         global_model.train()
@@ -49,52 +55,46 @@ if __name__ == '__main__':
 
         for idx in idxs_users:
             local_model = LocalUpdate(args=args,dataset=train_dataset,idxs=user_groups[idx])
-            local_resnet = ResNet50(alpha_b = 0.1, alpha_g = 0.9)
+            local_resnet = ResNet50(alpha_b = 1-alpha_b, alpha_g = 1-alpha_g)
             gw = global_model.state_dict()
-            local_resnet.load_state_dict(gw,strict = False)
+            local_resnet.load_state_dict(gw, strict = False)
             local_resnet.to(device)
             w, loss = local_model.update_weights(model = local_resnet,global_round=epoch)
             local_weights.append(copy.deepcopy(w))
             local_losses.append(copy.deepcopy(loss))
+        train_loss_avg.append(sum(local_losses)/len(local_losses))
 
         global_weights = average_weights(local_weights)
-
-        global_model.load_state_dict(global_weights, strict = False)
+        global_model.load_state_dict(global_weights)
 
         loss_avg = sum(local_losses)/len(local_losses)
         train_loss.append(loss_avg)
 
-        list_acc, list_loss = [], []
+        total, correct = 0, 0 
         global_model.eval()
-        for c in range(args.num_users):
-            local_model = LocalUpdate(args=args,dataset=train_dataset,idxs=user_groups[idx])
-            acc, loss = local_model.inference(model = global_model)
-            list_acc.append(acc)
-            list_loss.append(loss)
-        train_accuracy.append(sum(list_acc)/len(list_acc))
+        with torch.no_grad():
+            for x, y in testloader:
+                x, y = x.to(device), y.to(device)
+                yhat = global_model(x)
+                _, predicted = torch.max(yhat.data, 1)
+                global_losses.append(loss_fn(yhat, y).item())
+                total += y.size(0)
+                correct += (predicted == y).sum().item()
+        test_loss_avg.append(sum(global_losses) / len(global_losses))
+        test_accuracy.append(correct / total)
 
 
-        # print global training loss after every 'i' rounds
-        if (epoch+1) % print_every == 0:
-            print(f' \nAvg Training Stats after {epoch+1} global rounds:')
-            print(f'Training Loss : {np.mean(np.array(train_loss))}')
-            print('Train Accuracy: {:.2f}% \n'.format(100*train_accuracy[-1]))
-
-	    # Test inference after completion of training
-        test_acc, test_loss = test_inference(args, global_model, test_dataset)
-        test_accur.append(test_acc)
-        test_losses.append(test_loss)
-
-    print(f' \n Results after {args.epochs} global rounds of training:')
-    print("|---- Avg Train Accuracy: {:.2f}%".format(100*train_accuracy[-1]))
-    print("|---- Test Accuracy: {:.2f}%".format(100*test_acc))
-
-    train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss Average' : np.array(train_loss),'Train Accuracy' : np.array(train_accuracy),'Test Loss': np.array(test_loss), 'Test accuracy': np.array(test_acc)}
-    train_csv = pd.DataFrame(train_dict)
-    train_csv.to_csv(f'FedMix_Norm:{args.norm_clients}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}_alphaB:{alpha_b}_alphaG:{alpha_g}.csv', index = False)
-
+        print(f' \n Results after {epoch+1} global rounds of training:')
+        print("|---- Avg Test Loss: {:.2f}".format(sum(global_losses) / len(global_losses)))
+        print("|---- Test Accuracy: {:.2f}%".format((correct / total)*100))
 
     
+    train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss Average' : np.array(train_loss_avg),'Test Loss': np.array(test_loss_avg), 'Test accuracy': np.array(test_accuracy)}
+    train_csv = pd.DataFrame(train_dict)
+    train_csv.to_csv(f'FedAVG_Norm:{args.norm_clients}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
+
+    
+
 
 
 
