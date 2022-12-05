@@ -251,7 +251,7 @@ class GroupNorm32(torch.nn.GroupNorm):
 
 def ResNet50_server(pretrained = True, norm_layer = "batch_norm"):
     if norm_layer == "batch_norm":
-        return resnet50(pretrained = False,norm_layer = nn.BatchNorm2d)
+        return resnet50(pretrained = pretrained,norm_layer = nn.BatchNorm2d)
     elif norm_layer == "group_norm":
         return resnet50(pretrained = False, norm_layer = GroupNorm32)
 
