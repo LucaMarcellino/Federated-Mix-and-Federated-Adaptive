@@ -62,7 +62,7 @@ if __name__ == '__main__':
             gw = global_model.state_dict()
             local_resnet.load_state_dict(gw, strict = False)
             local_resnet.to(device)
-            w, loss = local_model.update_weights(model = local_resnet,global_round=epoch)
+            w, loss = local_model.update_weights(model = copy.deepcopy(local_resnet) ,global_round=epoch)
             local_weights.append(copy.deepcopy(w))
             local_losses.append(copy.deepcopy(loss))
         train_loss_avg.append(sum(local_losses)/len(local_losses))
