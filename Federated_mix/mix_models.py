@@ -30,7 +30,6 @@ def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
-
 #Basic Block for ResNet
 class BasicBlock(nn.Module):
     expansion = 1
@@ -135,22 +134,25 @@ class Bottleneck(nn.Module):
         out = self.conv1(x)
         out1 = self.nlb1(out)
         out2 = self.nlb2(out)
-        out = out1 * self.alpha_b + out2 * self.alpha_g
-        #out1 = torch.mul(out1,self.alpha_b)
-        #out2 = torch.mul(out2,self.alpha_g)
-        #out = torch.add(out1,out2)
+        out1 = torch.mul(out1,self.alpha_b)
+        out2 = torch.mul(out2,self.alpha_g)
+        out = torch.add(out1,out2)
         out = self.relu(out)
 
         out = self.conv2(out)
         out1 = self.nlb2(out)
         out2 = self.nlg2(out)
-        out = out1 * self.alpha_b + out2 * self.alpha_g
+        out1 = torch.mul(out1,self.alpha_b)
+        out2 = torch.mul(out2,self.alpha_g)
+        out = torch.add(out1,out2)
         out = self.relu(out)
 
         out = self.conv3(out)
         out1 = self.nlb3(out)
         out2 = self.nlg3(out)
-        out = out1 * self.alpha_b + out2 * self.alpha_g
+        out1 = torch.mul(out1,self.alpha_b)
+        out2 = torch.mul(out2,self.alpha_g)
+        out = torch.add(out1,out2)
 
         if self.downsample is not None:
             identity = self.downsample(x)

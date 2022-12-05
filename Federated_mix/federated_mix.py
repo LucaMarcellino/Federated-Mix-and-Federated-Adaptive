@@ -16,35 +16,32 @@ from update import LocalUpdate, DatasetSplit, test_inference
 from mix_models import ResNet50
 from torchvision import models
 
-
-
 if __name__ == '__main__':
     
     args = args_parser()
     exp_details(args)
 
     device = "cuda" if args.gpu != None else "cpu"
+    test_accuracy, test_loss_avg = [], []
+    train_loss_avg = []
+    val_acc_list, net_list = [],[]
+    cv_loss, cv_acc = [],[]
+    print_every = 20
+    val_loss_pre, counter = 0, 0
+
+    alpha_b = args.alpha_b  
+    alpha_g = args.alpha_g
     
     loss_fn = torch.nn.CrossEntropyLoss()
     g = torch.Generator()
     
     train_dataset, test_dataset, user_groups = get_dataset(args)
     testloader = torch.utils.data.DataLoader(test_dataset, batch_size=args.local_bs, shuffle=False, num_workers=2, generator=g)
-
-    alpha_b = args.alpha_b
-    alpha_g = args.alpha_g
     
     global_model = ResNet50(alpha_b = alpha_b, alpha_g = alpha_g)
     global_model.to(device)
-
-    train_loss, train_accuracy = [], []
-    train_loss_avg = []
-    val_acc_list, net_list = [],[]
-    cv_loss, cv_acc = [], []
-    test_accuracy, test_losses = [],[]
-    test_loss_avg = []
-    print_every = 20
-    val_loss_pre, counter = 0, 0
+    global_model.train()
+    global_weights = global_model.state_dict()
 
     for epoch in tqdm(range(args.epochs)):
         local_weights, local_losses, global_losses = [], [], []
@@ -54,24 +51,19 @@ if __name__ == '__main__':
         m = max(int(args.frac * args.num_users),1)
         idxs_users = np.random.choice(range(args.num_users),m, replace=False)
 
-
         for idx in idxs_users:
-            local_model = LocalUpdate(args=args,dataset=train_dataset,idxs=user_groups[idx])
-            #local_resnet = ResNet50(alpha_b = 1-alpha_b, alpha_g = 1-alpha_g)
-            local_resnet = ResNet50(alpha_b = alpha_b, alpha_g = alpha_g)
-            gw = global_model.state_dict()
-            local_resnet.load_state_dict(gw, strict = False)
-            local_resnet.to(device)
-            w, loss = local_model.update_weights(model = copy.deepcopy(local_resnet) ,global_round=epoch)
-            local_weights.append(copy.deepcopy(w))
-            local_losses.append(copy.deepcopy(loss))
+            with torch.autograd.set_detect_anomaly(True):
+                local_model = LocalUpdate(args=args,dataset=train_dataset,idxs=user_groups[idx])
+                local_resnet = ResNet50(alpha_b = 1-alpha_b, alpha_g = 1-alpha_g)
+                local_resnet.load_state_dict(global_weights)
+                local_resnet.to(device)
+                w, loss = local_model.update_weights(model = local_resnet,global_round=epoch)
+                local_weights.append(copy.deepcopy(w))
+                local_losses.append(copy.deepcopy(loss))
         train_loss_avg.append(sum(local_losses)/len(local_losses))
 
         global_weights = average_weights(local_weights)
-        global_model.load_state_dict(global_weights)
-
-        loss_avg = sum(local_losses)/len(local_losses)
-        train_loss.append(loss_avg)
+        global_model.load_state_dict(global_weights, strict = False)
 
         total, correct = 0, 0 
         global_model.eval()
@@ -94,7 +86,7 @@ if __name__ == '__main__':
     
     train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss Average' : np.array(train_loss_avg),'Test Loss': np.array(test_loss_avg), 'Test accuracy': np.array(test_accuracy)}
     train_csv = pd.DataFrame(train_dict)
-    train_csv.to_csv(f'FedAVG_Norm:{args.norm_clients}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
+    train_csv.to_csv(f'FedMix_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}_alphaB:{alpha_b}_alphaG:{alpha_g}.csv', index = False)
 
     
 
