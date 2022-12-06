@@ -30,7 +30,7 @@ dataAvgBN = pd.read_csv("Results\FedAVG_results\FedAVG_5_local_ep_Norm_Batch Nor
 
 #---------- Plot the graphs ----------#
 plt.figure(figsize=(10,10))
-plt.plot(dataAvgBN["Epochs"],dataAvgBN["Test accuracy"],marker = "o", label = 'FedAvg NonIID Batch Norm')
+plt.plot(dataAvgBN["Epochs"],dataAvgBN["Test accuracy"],marker = "o", label = 'FedAvg IID Batch Norm')
 plt.ylim(bottom = 0)
 plt.title("Comparison between methods With IID")
 plt.xlabel("Epochs")
