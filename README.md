@@ -1,7 +1,7 @@
 # Federated Learning And Federated Mix
 
 ## Contributions 
-This repo was built by [Luca Marcellino](https://github.com/LucaMarcellino), [Luca Villani](https://github.com/lucavillanigit) and [Edoardo Bonelli](https://github.com/wh33li3)
+This repo was built by [Luca Marcellino](https://github.com/LucaMarcellino), [Luca Villani](https://github.com/lucavillanigit) and [Edoardo Bonelli](https://github.com/wh33li3). We worked all together to guarantee the best possible results.
 
 ## Content
 
