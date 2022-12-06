@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
             local_weights.append(copy.deepcopy(w))
             local_losses.append(copy.deepcopy(loss))
-        train_loss_avg = sum(local_losses) / len(local_losses)
+        train_loss_avg.append(sum(local_losses) / len(local_losses))
 
         global_weights = average_weights(local_weights, counts)
         global_net.load_state_dict(global_weights)
