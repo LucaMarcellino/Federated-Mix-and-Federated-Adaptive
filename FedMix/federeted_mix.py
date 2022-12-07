@@ -30,7 +30,8 @@ if __name__ == '__main__':
     cv_loss, cv_acc = [], []
     print_every = 20
     val_loss_pre, counter = 0, 0
-
+    
+    make_it_reproducible(0)
     loss_fn = torch.nn.CrossEntropyLoss()
     g = torch.Generator()
 
