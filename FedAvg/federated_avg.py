@@ -15,7 +15,7 @@ from utils import exp_details, get_dataset, average_weights
 from update import LocalUpdate
 from models import ResNet50
 from torchvision import models
-from reproducibility import seed_worker
+from reproducibility import seed_worker,make_it_reproducible 
 
 
 if __name__ == '__main__':
@@ -30,7 +30,8 @@ if __name__ == '__main__':
     cv_loss, cv_acc = [], []
     print_every = 20
     val_loss_pre, counter = 0, 0
-
+    
+    make_it_reproducible(0)
     loss_fn = torch.nn.CrossEntropyLoss()
     g = torch.Generator()
     
