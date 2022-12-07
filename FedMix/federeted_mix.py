@@ -15,7 +15,7 @@ from utils import exp_details, get_dataset, average_weights
 from update import LocalUpdate
 from mix_modelT import ResNet50
 from torchvision import models
-from reproducibility import seed_worker
+from reproducibility import seed_worker,make_it_reproducible
 
 
 if __name__ == '__main__':
