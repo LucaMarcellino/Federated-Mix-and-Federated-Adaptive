@@ -32,11 +32,13 @@ plt.show()
 
 #---------- Import DataBase ----------#
 dataAvgBN = pd.read_csv("Results\FedAVG_results\FedAVG_5_local_ep_Norm_Batch Norm_iid_1_lr_0.01_mom_0.5_epochs_50.csv")
+dataAvgGN = pd.read_csv("Results\FedAVG_results\FedAVG_5_local_ep_Norm_Group Norm_iid_1_lr_0.01_mom_0.5_epochs_50.csv")
 
 
 #---------- Plot the graphs ----------#
 plt.figure(figsize=(10,10))
 plt.plot(dataAvgBN["Epochs"],dataAvgBN["Test accuracy"],marker = "o",markersize=3.5,linestyle = "--", label = 'FedAvg IID Batch Norm')
+plt.plot(dataAvgGN["Epochs"],dataAvgGN["Test accuracy"],marker = "o",markersize=3.5,linestyle = "--", label = 'FedAvg IID Group Norm')
 plt.ylim(bottom = 0)
 plt.title("Comparison between methods With IID")
 plt.xlabel("Epochs")
