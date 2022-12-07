@@ -85,4 +85,4 @@ if __name__ == '__main__':
     
     train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss Average' : np.array(train_loss_avg),'Test Loss': np.array(test_loss_avg), 'Test accuracy': np.array(test_accuracy)}
     train_csv = pd.DataFrame(train_dict)
-    train_csv.to_csv(f'FedAVG_5_local_ep_Norm:{args.norm_layer}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
+    train_csv.to_csv(f'FedAVG_{args.local_bs}_local_ep_Norm:{args.norm_layer}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
