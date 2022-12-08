@@ -1,7 +1,8 @@
 #Utils and System Libraries
 import copy
 import time
-from tqdm import tqdm
+from tqdm import tqdm 
+import random
 
 #Math Libraries
 import numpy as np
@@ -13,9 +14,9 @@ import torch.nn as nn
 from options import args_parser 
 from utils import exp_details, get_dataset, average_weights
 from update import LocalUpdate
-from models import ResNet50
+from mix_modelT import ResNet50
 from torchvision import models
-from reproducibility import seed_worker,make_it_reproducible 
+from reproducibility import seed_worker,make_it_reproducible
 
 
 if __name__ == '__main__':
@@ -34,14 +35,19 @@ if __name__ == '__main__':
     make_it_reproducible(0)
     loss_fn = torch.nn.CrossEntropyLoss()
     g = torch.Generator()
+
+    alpha_b = args.alpha_b
+    alpha_g = args.alpha_g
     
     train_dataset, test_dataset, user_groups = get_dataset(args)
     testloader = torch.utils.data.DataLoader(test_dataset, batch_size=args.local_bs, shuffle=False, num_workers=2, generator=g)
 
-    global_net = ResNet50(norm_type = args.norm_layer)
+    global_net = ResNet50(norm_type = "Group Norm",alpha_b = alpha_b, alpha_g = alpha_g)
     global_net.to(device)
     global_net.train()
     global_weights = global_net.state_dict()
+    
+    local_bs = [random.randrange(2, 18, 2) for i in range(args.num_users)]
     
     for epoch in tqdm(range(args.epochs)):
         local_weights, counts, local_losses, global_losses = [], [], [], []
@@ -51,9 +57,17 @@ if __name__ == '__main__':
         idxs_users = np.random.choice(range(args.num_users),m, replace=False)
 
         for idx in idxs_users:
-            local_net = LocalUpdate(dataset=train_dataset, idxs=user_groups[idx], local_batch_size=args.local_bs,\
+            local_net = LocalUpdate(dataset=train_dataset, idxs=user_groups[idx], local_batch_size=local_bs[idx],\
                 local_epochs=args.local_ep, worker_init_fn=seed_worker(0), generator=g, device=device)
-            w, loss = local_net.update_weights(model=copy.deepcopy(global_net))
+            if local_bs[idx] <=8:
+                alpha_b, alpha_g = 0,1
+            else:
+                alpha_b, alpha_g = 1,0
+            local_resnet = ResNet50(norm_type = "Group Norm",alpha_b = alpha_b, alpha_g = alpha_g)
+            local_resnet.load_state_dict(global_weights)
+            local_resnet.to(device)
+            w, loss = local_net.update_weights(model=copy.deepcopy(local_resnet))
+
             counts.append(len(user_groups[idx]))
 
             local_weights.append(copy.deepcopy(w))
@@ -86,4 +100,4 @@ if __name__ == '__main__':
     
     train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss Average' : np.array(train_loss_avg),'Test Loss': np.array(test_loss_avg), 'Test accuracy': np.array(test_accuracy)}
     train_csv = pd.DataFrame(train_dict)
-    train_csv.to_csv(f'FedAVG_{args.local_ep}_local_ep_Norm:{args.norm_layer}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
+    train_csv.to_csv(f'FedMix_{args.local_ep}_local_ep_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}_alphaB:{args.alpha_b}_alphaG:{args.alpha_g}.csv', index = False)
