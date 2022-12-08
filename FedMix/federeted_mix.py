@@ -59,7 +59,7 @@ if __name__ == '__main__':
         for idx in idxs_users:
             local_net = LocalUpdate(dataset=train_dataset, idxs=user_groups[idx], local_batch_size=local_bs[idx],\
                 local_epochs=args.local_ep, worker_init_fn=seed_worker(0), generator=g, device=device)
-            if local_bs <=8:
+            if local_bs[idx] <=8:
                 alpha_b, alpha_g = 0,1
             else:
                 alpha_b, alpha_g = 1,0
