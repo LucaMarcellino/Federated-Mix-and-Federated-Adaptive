@@ -44,7 +44,7 @@ if __name__ == '__main__':
     global_net.train()
     global_weights = global_net.state_dict()
     
-    local_bs = [random.randrange(2, 18, 2) for i in range(args.num_users)]
+    local_bs = [np.random.choice([2,4,8,16,32,64]) for i in range(args.num_users)]
     
     for epoch in tqdm(range(args.epochs)):
         local_weights, counts, local_losses, global_losses = [], [], [], []
