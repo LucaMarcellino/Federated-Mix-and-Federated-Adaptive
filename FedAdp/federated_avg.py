@@ -54,7 +54,7 @@ if __name__ == '__main__':
         idxs_users = np.random.choice(range(args.num_users),m, replace=False)
 
         for idx in idxs_users:
-            local_net = LocalUpdate(dataset=train_dataset, idxs=user_groups[idx], local_batch_size=local_bs[idx],\
+            local_net = LocalUpdate(dataset=train_dataset, idxs=user_groups[idx], local_batch_size=int(local_bs[idx]),\
                 local_epochs=args.local_ep, worker_init_fn=seed_worker(0), generator=g, device=device)
             w, loss = local_net.update_weights(model=copy.deepcopy(global_net))
             counts.append(len(user_groups[idx]))
