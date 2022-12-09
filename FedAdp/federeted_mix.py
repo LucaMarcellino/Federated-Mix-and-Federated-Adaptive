@@ -47,7 +47,7 @@ if __name__ == '__main__':
     global_net.train()
     global_weights = global_net.state_dict()
     
-    local_bs = np.random.choice([2,4,8,16,32,64], args.num_users)
+    local_bs = [np.random.choice([2,4,8,16,32,64]) for i in range(args.num_users)]
     
     for epoch in tqdm(range(args.epochs)):
         local_weights, counts, local_losses, global_losses = [], [], [], []
@@ -57,7 +57,7 @@ if __name__ == '__main__':
         idxs_users = np.random.choice(range(args.num_users),m, replace=False)
 
         for idx in idxs_users:
-            local_net = LocalUpdate(dataset=train_dataset, idxs=user_groups[idx], local_batch_size=local_bs[idx],\
+            local_net = LocalUpdate(dataset=train_dataset, idxs=user_groups[idx], local_batch_size=int(local_bs[idx]),\
                 local_epochs=args.local_ep, worker_init_fn=seed_worker(0), generator=g, device=device)
             if local_bs[idx] <=8:
                 alpha_b, alpha_g = 0,1
