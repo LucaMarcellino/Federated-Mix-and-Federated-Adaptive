@@ -16,7 +16,7 @@ from update import LocalUpdate
 from mix_modelT import ResNet50
 from torchvision import models
 from reproducibility import seed_worker,make_it_reproducible
-from torchvision.models import resnet50, ResNet50_Weights
+
 
 
 if __name__ == '__main__':
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     train_dataset, test_dataset, user_groups = get_dataset(args)
     testloader = torch.utils.data.DataLoader(test_dataset, batch_size=args.local_bs, shuffle=False, num_workers=2, generator=g)
 
-    global_net = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
+    global_net = ResNet50(norm_type = "Group Norm",alpha_b = alpha_b, alpha_g = alpha_g)
     global_net.to(device)
     global_net.train()
     global_weights = global_net.state_dict()
