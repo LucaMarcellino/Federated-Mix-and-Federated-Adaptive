@@ -212,7 +212,7 @@ class GKTServerTrainer:
         self.model.eval()
 
         loss_avg = utils.RunningAverage()
-        acc_avg = utils.RunningAverage())
+        acc_avg = utils.RunningAverage()
 
         # deactivate the autograd engine in order to increase performance
         with torch.no_grad():
