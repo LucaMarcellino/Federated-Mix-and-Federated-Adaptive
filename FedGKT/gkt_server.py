@@ -224,7 +224,7 @@ class GKTServerTrainer:
                 # print(f"extracted_feature_dict_test len - {len(extracted_feature_dict.keys())}")
                 for batch_idx in extracted_feature_dict.keys():
                     # retrieve information for every batch
-                    batch_feature_map = torch.from_numpy(extracted_feature_dict[batch_idx]).to(self.device)
+                    batch_feature_map = torch.from_numpy(extracted_feature_dict[batch_idx].detach().numpy()).to(self.device)
                     batch_labels = torch.from_numpy(labels_dict[batch_idx]).long().to(self.device)
 
                     output_batch = self.model(batch_feature_map)
