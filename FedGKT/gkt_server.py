@@ -66,15 +66,15 @@ class GKTServerTrainer:
         return self.loss_list, self.acc_list
 
     def remove_records(self):
-        for idx in self.client_extracted_feauture_dict.keys():
-            self.client_extracted_feauture_dict[idx].clear()
+        for idx in self.client_extracted_feature_dict.keys():
+            self.client_extracted_feature_dict[idx].clear()
             self.client_logits_dict[idx].clear()
             self.client_labels_dict[idx].clear()
             self.server_logits_dict[idx].clear()
         for id in self.client_extracted_feauture_dict_test.keys():
             self.client_extracted_feauture_dict_test[idx].clear()
             self.client_labels_dict_test[idx].clear()
-        self.client_extracted_feauture_dict.clear()
+        self.client_extracted_feature_dict.clear()
         self.client_logits_dict.clear()
         self.client_labels_dict.clear()
         self.server_logits_dict.clear()
@@ -216,7 +216,6 @@ class GKTServerTrainer:
 
         # deactivate the autograd engine in order to increase performance
         with torch.no_grad():
-            # for client_index in self.client_extracted_feauture_dict_test.keys():
             for client_index in idxs_chosen_users:
                 # retrieve test information for each client
                 extracted_feature_dict = self.client_extracted_feauture_dict_test[client_index]
