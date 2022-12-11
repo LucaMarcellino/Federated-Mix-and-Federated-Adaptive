@@ -3,8 +3,8 @@ import copy
 import torch
 import torch.nn as nn
 from torchvision import datasets,transforms
-from sampling import cifar_iid, cifar_noniid
-import torch.nn.functional as F
+from sampling import cifar_iid, cifar_noniid, cifar_noniid_unbalanced
+import numpy as np
 
 def exp_details(args):
     print('\nExperimental details:')
@@ -48,10 +48,12 @@ def get_dataset(args):
     #sample training
     if args.iid:
         #sample IID user
-        user_group = cifar_iid(train_dataset,args.num_users)
-    else:
+        user_group,_ = cifar_iid(train_dataset,args.num_users)
+    elif args.iid == 0 and args.unequal == 0:
         #sample Non-IID user
-        user_group = cifar_noniid(train_dataset,args.num_users)
+        user_group,_ = cifar_noniid(train_dataset,args.num_users)
+    elif args.iid == 0 and args.unequal == 1:
+        user_group,_ = cifar_noniid_unbalanced(train_dataset, args.num_users)
    
     return train_dataset, test_dataset, user_group 
 

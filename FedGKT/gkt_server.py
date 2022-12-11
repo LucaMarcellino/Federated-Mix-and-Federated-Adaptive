@@ -2,10 +2,8 @@ import torch
 from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.nn import functional as F
-
 import utils
 
-# TODO the train accuracy is wrong
 
 class GKTServerTrainer:
 
@@ -67,12 +65,27 @@ class GKTServerTrainer:
     def get_loss_acc_list(self):
         return self.loss_list, self.acc_list
 
+    def remove_records(self):
+        for idx in self.client_extracted_feauture_dict.keys():
+            self.client_extracted_feauture_dict[idx].clear()
+            self.client_logits_dict[idx].clear()
+            self.client_labels_dict[idx].clear()
+            self.server_logits_dict[idx].clear()
+        for id in self.client_extracted_feauture_dict_test.keys():
+            self.client_extracted_feauture_dict_test[idx].clear()
+            self.client_labels_dict_test[idx].clear()
+        self.client_extracted_feauture_dict.clear()
+        self.client_logits_dict.clear()
+        self.client_labels_dict.clear()
+        self.server_logits_dict.clear()
+        self.client_extracted_feauture_dict_test.clear()
+        self.client_labels_dict_test.clear()
+
     # collect client data
     def add_local_trained_result(self, idx, extracted_feature_dict, logits_dict, labels_dict,
                                  extracted_feature_dict_test, labels_dict_test):
         print("add model - client_id = %d" % idx)
 
-        # TODO not needed to store
         self.client_extracted_feature_dict[idx] = extracted_feature_dict
         self.client_logits_dict[idx] = logits_dict
         self.client_labels_dict[idx] = labels_dict
@@ -93,9 +106,6 @@ class GKTServerTrainer:
         # adjust the learning rate based on the number of epochs.
         # https://pytorch.org/docs/stable/optim.html#torch.optim.lr_scheduler.ReduceLROnPlateau
         self.scheduler.step(self.best_acc, epoch=communication_round)
-
-        # clean all client data (in order to avoid allocating too much data in RAM)
-        # TODO check if this loop in necessary
         
         for client_index in idxs_chosen_users:
             self.client_extracted_feature_dict[client_index].clear()
@@ -145,7 +155,6 @@ class GKTServerTrainer:
         loss_avg = utils.RunningAverage()
         acc_avg = utils.RunningAverage()
 
-        # TODO i have to use all the clients indxs every time (more and more each communication round) or i should use only the clients of this communication round??
         # for client_index in self.client_extracted_feature_dict.keys():
         for client_index in idxs_chosen_users:
             # retrieve information for each client
@@ -204,8 +213,6 @@ class GKTServerTrainer:
 
         loss_avg = utils.RunningAverage()
         acc_avg = utils.RunningAverage()
-        # accTop1_avg = GTKutils.RunningAverage()
-        # accTop5_avg = GTKutils.RunningAverage()
 
         # deactivate the autograd engine in order to increase performance
         with torch.no_grad():

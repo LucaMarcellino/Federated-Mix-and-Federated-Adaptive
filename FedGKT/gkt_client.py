@@ -39,8 +39,10 @@ class GKTClientTrainer(object):
     def __init__(self, model, device,  train_dataset, test_dataset, idxs, client_index, args):
         self.model = model
         self.model_params = self.model.parameters()
-
         self.device = device
+
+        self.model.to(self.device)
+
         self.optimizer = args.optimizer
         self.local_batch_size = args.local_bs
         self.lr = args.lr
@@ -49,6 +51,8 @@ class GKTClientTrainer(object):
 
         self.trainloader, self.testloader = self.train_test(
             train_dataset, test_dataset, list(idxs))  # get train, valid sets
+        
+        
 
         # Set optimizer for the local updates
         if self.optimizer == "sgd":
@@ -68,6 +72,23 @@ class GKTClientTrainer(object):
 
     def update_large_model_logits(self, logits):
         self.server_logits_dict = logits
+    
+    def remove_records(self):
+        for idx in self.client_extracted_feauture_dict.keys():
+            self.client_extracted_feauture_dict[idx].clear()
+            self.client_logits_dict[idx].clear()
+            self.client_labels_dict[idx].clear()
+            self.server_logits_dict[idx].clear()
+        for id in self.client_extracted_feauture_dict_test.keys():
+            self.client_extracted_feauture_dict_test[idx].clear()
+            self.client_labels_dict_test[idx].clear()
+        self.client_extracted_feauture_dict.clear()
+        self.client_logits_dict.clear()
+        self.client_labels_dict.clear()
+        self.server_logits_dict.clear()
+        self.client_extracted_feauture_dict_test.clear()
+        self.client_labels_dict_test.clear()
+
 
     # for REPRODUCIBILITY https://pytorch.org/docs/stable/notes/randomness.html
     def seed_worker(args):
@@ -101,8 +122,10 @@ class GKTClientTrainer(object):
         for epoch in range(1, self.local_epochs + 1):
             batch_loss = []
 
-            for batch_idx, (images, labels) in enumerate(self.trainloader):
+            for batch_idx, data in enumerate(self.trainloader):
                 # move tensors to GPU if CUDA is available
+                
+                images, labels = data
                 images = images.to(self.device)
                 labels = labels.to(self.device)
 
@@ -146,30 +169,23 @@ class GKTClientTrainer(object):
         # Set mode to evaluation model
         self.model.eval()
 
-        for batch_idx, (images, labels) in enumerate(self.trainloader):
-            # move tensors to GPU if CUDA is available
+        for batch_idx, data in enumerate(self.trainloader):
+            
+            images, labels = data
             images = images.to(self.device)
             labels = labels.to(self.device)
 
             log_probs, extracted_features = self.model(images)
 
-            """
-            if dataset too large -> OUT OF MEMORY ERROR
-            it is better to run the program on CPU
-            """
-            # TODO try on GPU
-            #if self.device == "cuda":
-            #extracted_feature_dict[batch_idx] = extracted_features
-            #logits_dict[batch_idx] = log_probs
-            #labels_dict[batch_idx] = labels
-            #else:
             extracted_feature_dict[batch_idx] = extracted_features.cpu().detach().numpy()
-            logits_dict[batch_idx] = log_probs.cpu().detach().numpy()  
+            log_probs = log_probs.cpu().detach().numpy()
+            logits_dict[batch_idx] = log_probs  
             labels_dict[batch_idx] = labels.cpu().detach().numpy()
             
 
-        for batch_idx, (images, labels) in enumerate(self.testloader):
+        for batch_idx, data in enumerate(self.testloader):
             # move tensors to GPU if CUDA is available
+            images, labels = data
             test_images = images.to(self.device)
             test_labels = labels.to(self.device)
 
