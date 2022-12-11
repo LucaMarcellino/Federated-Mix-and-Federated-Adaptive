@@ -42,7 +42,7 @@ if __name__ == '__main__':
     train_dataset, test_dataset, user_groups = get_dataset(args)
     testloader = torch.utils.data.DataLoader(test_dataset, batch_size=args.local_bs, shuffle=False, num_workers=2, generator=g)
 
-    global_net = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
+    global_net = torch.hub.load("pytorch/vision", "resnet50", weights="IMAGENET1K_V2")
     global_net.to(device)
     global_net.train()
     global_weights = global_net.state_dict()
