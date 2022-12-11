@@ -245,3 +245,6 @@ class GKTServerTrainer:
         print("\n- TEST METRICS: " + metrics_string + "\n")
 
         return test_metrics
+
+    def get_metrics_lists(self):
+        return self.train_metrics_list, self.test_metrics_list
