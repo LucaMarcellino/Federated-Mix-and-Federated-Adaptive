@@ -16,7 +16,7 @@ from update import LocalUpdate
 from mix_modelT import ResNet50
 from torchvision import models
 from reproducibility import seed_worker,make_it_reproducible
-from torchvision.models import resnet50, ResNet50_Weights
+
 
 
 if __name__ == '__main__':
