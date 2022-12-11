@@ -91,5 +91,5 @@ if __name__ == "__main__":
     df_train = pd.concat([df_train, train_data], ignore_index=True)
     df_test = pd.concat([df_test, test_data], ignore_index=True)
 
-df_train.to_csv("./results/federated_gkt/fedgkt_train_results.csv", index=False)
-df_test.to_csv("./results/federated_gkt/fedgkt_test_results.csv", index=False)
+df_train.to_csv("./fedgkt_train_iid:{}_unbalanced:{}_norm:{}.csv".format(args.iid,args.unequal,norm_type), index=False)
+df_test.to_csv("./fedgkt_test_iid:{}_unbalanced:{}_norm:{}.csv".format(args.iid,args.unequal,norm_type), index=False)
