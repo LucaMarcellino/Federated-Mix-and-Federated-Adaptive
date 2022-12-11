@@ -5,6 +5,7 @@ import torch.nn as nn
 from torchvision import datasets,transforms
 from sampling import cifar_iid, cifar_noniid, cifar_noniid_unbalanced
 import numpy as np
+import torch.nn.functional as F
 
 def exp_details(args):
     print('\nExperimental details:')
