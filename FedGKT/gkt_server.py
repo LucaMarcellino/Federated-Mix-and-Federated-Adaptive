@@ -57,6 +57,9 @@ class GKTServerTrainer:
         self.loss_list = []
         self.acc_list = []
 
+        self.train_metrics_list = []
+        self.test_metrics_list = []
+
         self.flag_client_model_uploaded_dict = dict()  # to check if all clients sent their logits
         for idx in range(self.num_users):
             self.flag_client_model_uploaded_dict[idx] = False
@@ -125,12 +128,14 @@ class GKTServerTrainer:
             print("train_and_eval - round_idx = %d, epoch = %d" % (round_idx, epoch))
 
             train_metrics = self.train_large_model_on_the_server(idxs_chosen_users)
+            self.train_metrics_list.append(train_metrics)
 
             if epoch == epochs:  # if it is last epoch
                 print(f"Train/Loss: {train_metrics['train_loss']} - epoch: {epoch}")
                 print(f"Train/Accuracy: {train_metrics['train_accuracy']} - epoch: {epoch}")
 
                 test_metrics = self.eval_large_model_on_the_server(idxs_chosen_users)
+                self.test_metrics_list.append(test_metrics)
 
                 print(f"Test/Loss: {test_metrics['test_loss']} - epoch: {epoch}")
                 print(f"Test/Accuracy: {test_metrics['test_accuracy']} - epoch: {epoch}")
