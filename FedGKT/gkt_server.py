@@ -5,6 +5,7 @@ from torch.nn import functional as F
 import utils
 
 
+
 class GKTServerTrainer:
 
     def __init__(self,model,device,args):
@@ -180,7 +181,8 @@ class GKTServerTrainer:
                 output_batch = self.model(batch_feature_map)
 
                 # compute loss
-                loss = self.criterion_CE(output_batch, batch_labels).to(self.device)
+                loss_true = self.criterion_CE(output_batch, batch_labels).to(self.device)
+                loss = loss_true
 
                 # clear the gradients of all optimized variables
                 self.optimizer.zero_grad()
@@ -191,10 +193,8 @@ class GKTServerTrainer:
 
 
                 # find the maximum along the rows, use dim=1 to torch.max()
-                _, predicted_outputs = torch.max(output_batch.data, 1)
-                x = (predicted_outputs == batch_labels).float().sum().item() * 100 / batch_labels.size(0)
-                acc_avg.update(x)
-
+                metrics = utils.accuracy(output_batch, batch_labels, topk=(1,))
+                acc_avg.update(metrics[0].item())
                 loss_avg.update(loss.item())
 
                 # update the logits for each client
@@ -237,9 +237,8 @@ class GKTServerTrainer:
                     loss = self.criterion_CE(output_batch, batch_labels).to(self.device)
 
                     # find the maximum along the rows, use dim=1 to torch.max()
-                    _, predicted_outputs = torch.max(output_batch.data, 1)
-                    acc_avg.update((predicted_outputs == batch_labels).float().sum().item())
-
+                    metrics = utils.accuracy(output_batch, batch_labels, topk=(1,))
+                    acc_avg.update(metrics[0].item())
                     loss_avg.update(loss.item())
 
         # compute mean of all metrics in summary
