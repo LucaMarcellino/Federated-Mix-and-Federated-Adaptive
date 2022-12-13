@@ -30,11 +30,11 @@ class LocalUpdate(object):
         self.local_epochs = local_epochs
         self.criterion = nn.CrossEntropyLoss()
 
-    def update_weights(self, model):
+    def update_weights(self, model, lr):
         model.train()
         epoch_loss = []
 
-        optimizer = torch.optim.SGD(model.parameters(), lr=1e-2, momentum=0.5)
+        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.5)
 
         for iter in range(self.local_epochs):
             batch_loss = []

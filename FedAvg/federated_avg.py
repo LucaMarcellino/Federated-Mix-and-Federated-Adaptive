@@ -53,7 +53,7 @@ if __name__ == '__main__':
         for idx in idxs_users:
             local_net = LocalUpdate(dataset=train_dataset, idxs=user_groups[idx], local_batch_size=args.local_bs,\
                 local_epochs=args.local_ep, worker_init_fn=seed_worker(0), generator=g, device=device)
-            w, loss = local_net.update_weights(model=copy.deepcopy(global_net))
+            w, loss = local_net.update_weights(model=copy.deepcopy(global_net), lr=args.lr)
             counts.append(len(user_groups[idx]))
 
             local_weights.append(copy.deepcopy(w))
