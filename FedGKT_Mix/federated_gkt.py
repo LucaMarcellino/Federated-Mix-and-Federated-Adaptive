@@ -3,6 +3,7 @@ import numpy as np
 import random
 import pandas as pd
 from tqdm import tqdm
+import torch.nn as nn
 
 from gkt_models import ResNet49, ResNet8
 from gkt_server import GKTServerTrainer
@@ -36,6 +37,12 @@ if __name__ == "__main__":
     server_model = ResNet49(norm_type,alpha_b= args.alpha_b,alpha_g=args.alpha_g)
     server_model.to(device)
     client_model = ResNet8(norm_type,alpha_b= args.alpha_b,alpha_g=args.alpha_g)
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        # Batch size should be divisible by number of GPUs
+        server_model = nn.DataParallel(server_model)
+        client_model = nn.DataParallel(client_model)
+        
 
     #Trainer Declaration
     server_trainer = GKTServerTrainer(server_model,device,args)
