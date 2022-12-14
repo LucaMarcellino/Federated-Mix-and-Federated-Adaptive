@@ -40,6 +40,7 @@ if __name__ == "__main__":
         print("Let's use", torch.cuda.device_count(), "GPUs!")
         # Batch size should be divisible by number of GPUs
         server_model = nn.DataParallel(server_model)
+        print(next(server_model.parameters()).is_cuda)
     else:
         server_model.to(device)
 
