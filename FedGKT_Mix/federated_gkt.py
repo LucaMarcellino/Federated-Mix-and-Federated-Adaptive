@@ -40,7 +40,7 @@ if __name__ == "__main__":
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
         # Batch size should be divisible by number of GPUs
-        torch.distributed.init_process_group(backend='nccl', world_size=4, init_method='...')
+        torch.distributed.init_process_group(backend='nccl', world_size=4)
         server_model = nn.parallel.DistributedDataParallel(server_model)
         print(next(server_model.parameters()).is_cuda)
     else:
