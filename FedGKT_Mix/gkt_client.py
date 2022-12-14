@@ -40,8 +40,12 @@ class GKTClientTrainer(object):
         self.model = model
         self.model_params = self.model.parameters()
         self.device = device
-
-        self.model.to(self.device)
+        if torch.cuda.device_count() > 1:
+            print("Let's use", torch.cuda.device_count(), "GPUs!")
+            # Batch size should be divisible by number of GPUs
+            self.model = nn.DataParallel(model,device_ids=[0,1],output_device=[0,1])
+        else:
+            self.model.to(self.device)
 
         self.optimizer = args.optimizer
         self.local_batch_size = args.local_bs
