@@ -35,13 +35,12 @@ if __name__ == "__main__":
 
     #Model Declaration
     server_model = ResNet49(norm_type,alpha_b= args.alpha_b,alpha_g=args.alpha_g)
-    #server_model.to(device)
+    server_model.to("cuda")
     client_model = ResNet8(norm_type,alpha_b= args.alpha_b,alpha_g=args.alpha_g)
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
         # Batch size should be divisible by number of GPUs
-        torch.distributed.init_process_group(backend='nccl', world_size=4)
-        server_model = nn.parallel.DistributedDataParallel(server_model)
+        server_model = nn.DataParallel(server_model)
         print(next(server_model.parameters()).is_cuda)
     else:
         server_model.to(device)
