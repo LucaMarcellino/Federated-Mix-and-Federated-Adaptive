@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from torch.nn import functional as F
-from torch.nn import DataParallel
+import torch.nn as tn
 
 import numpy as np
 import pandas as pd
@@ -45,7 +45,8 @@ class GKTClientTrainer(object):
         if torch.cuda.device_count() > 1:
             print("Let's use", torch.cuda.device_count(), "GPUs!")
             # Batch size should be divisible by number of GPUs
-            self.model = DataParallel(self.model)
+            self.model = tn.DataParallel(self.model)
+            print(device(self.model))
         else:
             self.model.to(self.device)
 
