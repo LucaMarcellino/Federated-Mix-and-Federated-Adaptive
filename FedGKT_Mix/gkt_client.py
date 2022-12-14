@@ -39,8 +39,8 @@ class DatasetSplit(Dataset):
 class GKTClientTrainer(object):
     def __init__(self, model, device,  train_dataset, test_dataset, idxs, client_index, args):
         self.model = model
-        self.model.to(self.device)
         self.device = device
+        self.model.to(self.device)
         if torch.cuda.device_count() > 1:
             print("Let's use", torch.cuda.device_count(), "GPUs!")
             # Batch size should be divisible by number of GPUs
