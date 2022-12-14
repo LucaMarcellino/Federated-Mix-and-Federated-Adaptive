@@ -35,6 +35,7 @@ if __name__ == "__main__":
 
     #Model Declaration
     server_model = ResNet49(norm_type,alpha_b= args.alpha_b,alpha_g=args.alpha_g)
+    server_model.to("cuda")
     client_model = ResNet8(norm_type,alpha_b= args.alpha_b,alpha_g=args.alpha_g)
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
