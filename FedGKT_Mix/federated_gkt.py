@@ -40,8 +40,8 @@ if __name__ == "__main__":
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
         # Batch size should be divisible by number of GPUs
-        server_model = nn.DataParallel(server_model,device_ids=0)
-        client_model = nn.DataParallel(client_model,device_ids=1)
+        server_model = nn.DataParallel(server_model,device_ids=[0])
+        client_model = nn.DataParallel(client_model,device_ids=[1])
         
 
     #Trainer Declaration
