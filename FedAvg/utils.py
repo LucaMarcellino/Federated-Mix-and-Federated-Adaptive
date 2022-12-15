@@ -2,7 +2,7 @@
 import copy
 import torch
 from torchvision import datasets,transforms
-from sampling import cifar_iid, cifar_noniid
+from sampling import cifar_iid, cifar_noniid, cifar_noniid_unbalanced
 
 def exp_details(args):
     print('\nExperimental details:')
@@ -11,11 +11,13 @@ def exp_details(args):
     print(f'    Learning  : {args.lr}')
     print(f'    Global Rounds   : {args.epochs}\n')
 
-    print('    Federated parameters:')
+    print('Federated parameters:')
     if args.iid:
         print('    IID')
-    else:
-        print('    Non-IID')
+    elif args.iid == 0 and args.unequal == 0:
+        print('    Non-IID Balanced')
+    elif args.iid == 0 and args.unequal == 1:
+        print('    Non-IID Unbalanced')
     print(f'    Fraction of users  : {args.frac}')
     print(f'    Local Batch size   : {args.local_bs}')
     print(f'    Local Epochs       : {args.local_ep}')
@@ -24,7 +26,6 @@ def exp_details(args):
     return
 
 def get_dataset(args):
-    #[TODO] Add wrapper for multiple datasets
     data_dir = '../data/cifar/'
     
     #Normalize used with mean and stds of Cifar10
@@ -44,10 +45,12 @@ def get_dataset(args):
     #sample training
     if args.iid:
         #sample IID user
-        user_group = cifar_iid(train_dataset,args.num_users)
-    else:
+        user_group,_ = cifar_iid(train_dataset,args.num_users)
+    elif args.iid == 0 and args.unequal == 0:
         #sample Non-IID user
-        user_group, _ = cifar_noniid(train_dataset,args.num_users)
+        user_group,_ = cifar_noniid(train_dataset,args.num_users)
+    elif args.iid == 0 and args.unequal == 1:
+        user_group,_ = cifar_noniid_unbalanced(train_dataset, args.num_users)
    
     return train_dataset, test_dataset, user_group 
 
