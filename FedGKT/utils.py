@@ -29,6 +29,7 @@ def exp_details(args):
         print("Running on CPU")
     return
 
+'''
 def get_dataset(args):
     data_dir = '../data/cifar/'
     
@@ -56,7 +57,28 @@ def get_dataset(args):
     elif args.iid == 0 and args.unequal == 1:
         user_group,_ = cifar_noniid_unbalanced(train_dataset, args.num_users)
    
-    return train_dataset, test_dataset, user_group 
+    return train_dataset, test_dataset, user_group
+'''
+
+def get_datasets(augmentation=False):
+    trainset = datasets.CIFAR10("./data", train=True, download=True)
+    testset = datasets.CIFAR10("./data", train=False, download=True)
+
+    cifar10_mean = [0.4914672374725342, 0.4822617471218109, 0.4467701315879822]
+    cifar10_std = [0.24703224003314972, 0.24348513782024384, 0.26158785820007324]
+
+    transform = transforms.Compose(
+        [transforms.ToTensor(), transforms.Normalize(cifar10_mean, cifar10_std),])
+    if augmentation:
+        transform_train = transforms.Compose(
+            [transforms.RandomCrop(32, padding=4), transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(), transforms.Normalize(cifar10_mean, cifar10_std)])
+        trainset.transform = transform_train
+    else:
+        trainset.transfrom = transform
+    testset.transform = transform
+
+    return trainset, testset
 
 
 def average_weights(w):

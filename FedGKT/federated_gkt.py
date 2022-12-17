@@ -9,8 +9,9 @@ from gkt_server import GKTServerTrainer
 from gkt_client import GKTClientTrainer
 
 from options import args_parser
-from utils import exp_details,get_dataset,average_weights
-from reproducibility import seed_worker,make_it_reproducible
+from utils import exp_details,get_datasets
+from reproducibility import make_it_reproducible
+from sampling import get_user_groups
 
 if __name__ == "__main__":
 
@@ -34,27 +35,27 @@ if __name__ == "__main__":
 
     #Model Declaration
     server_model = ResNet49(norm_type)
-    server_model.to(device)
     client_model = ResNet8(norm_type)
 
     #Trainer Declaration
-    server_trainer = GKTServerTrainer(server_model,device,args)
+    server_trainer = GKTServerTrainer(args.num_users,device,server_model, args, args.seed)
 
     #Dataset Retrieval
-    train_dataset, test_dataset, user_groups = get_dataset(args)
+    train_dataset, test_dataset =  get_datasets(augmentation=True)
+    user_groups,_ = get_user_groups(train_dataset, iid = args.iid, unbalanced= args.unequal, tot_users = args.num_users)
 
     clients = []
-    for idx in range(args.num_users):
-        clients.append(GKTClientTrainer(client_model,device,train_dataset,test_dataset
-										,user_groups[idx], idx, args))
+    for client_idx in range(args.num_users):
+        clients.append(GKTClientTrainer(client_idx, train_dataset, test_dataset,
+                                        user_groups[client_idx], device, client_model, args))
 
     df_train = pd.DataFrame()
     df_test = pd.DataFrame()
 
     #TRAINING
-    for communication_round in tqdm(range(1, args.communication_rounds+1)):
+    for communication_round in tqdm(range(args.communication_rounds)):
 
-        print(f"\nCommunication Round: {communication_round}\n")
+        print(f"\nCommunication Round: {communication_round+1}\n")
 
         m = max(int(args.frac * args.num_users), 1)
         chosen_users = np.random.choice(range(args.num_users), m, replace=False)
@@ -67,7 +68,7 @@ if __name__ == "__main__":
             server_trainer.add_local_trained_result(idx, extracted_features_dict, extracted_logits_dict, labels_dict,\
             extracted_features_dict_test, labels_dict_test)
 
-        server_trainer.train(communication_round, chosen_users)
+        server_trainer.train(communication_round)
 
         for idx in chosen_users:
             global_logits = server_trainer.get_global_logits(idx)

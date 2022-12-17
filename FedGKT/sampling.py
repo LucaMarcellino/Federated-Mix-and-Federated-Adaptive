@@ -128,3 +128,16 @@ def cifar_noniid_unbalanced(dataset, num_users):
             dict_users_cls_count[i][targets[e.astype(int)]] += 1
 
     return dict_users, dict_users_cls_count
+
+
+def get_user_groups(dataset, iid=True, unbalanced=False, tot_users=100):
+    user_groups = None
+    if iid:
+        user_groups, dict_user_cls_count = cifar_iid(dataset, tot_users)
+    else:
+        if unbalanced:
+            user_groups, dict_user_cls_count = cifar_noniid_unbalanced(dataset, tot_users)
+        else:
+            user_groups, dict_user_cls_count = cifar_noniid(dataset, tot_users)
+
+    return user_groups, dict_user_cls_count
