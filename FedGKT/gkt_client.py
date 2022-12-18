@@ -118,7 +118,7 @@ class GKTClientTrainer(object):
                 extracted_feature_dict_test[batch_idx] = extracted_features_test.cpu().detach().numpy()
                 labels_dict_test[batch_idx] = test_labels.cpu().detach().numpy()
             else:
-                extracted_feature_dict_test[batch_idx] = extracted_features_test#.cpu().detach().numpy()
-                labels_dict_test[batch_idx] = test_labels#.cpu().detach().numpy()
+                extracted_feature_dict_test[batch_idx] = extracted_features_test.cpu().detach().numpy()
+                labels_dict_test[batch_idx] = test_labels.cpu().detach().numpy()
 
         return extracted_feature_dict, logits_dict, labels_dict, extracted_feature_dict_test, labels_dict_test
