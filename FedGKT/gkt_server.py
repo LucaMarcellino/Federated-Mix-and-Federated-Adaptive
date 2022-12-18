@@ -153,8 +153,8 @@ class GKTServerTrainer:
                 labels_dict = self.client_labels_dict_test[client_index]
 
                 for batch_idx in extracted_feature_dict.keys():
-                    batch_feature_map = torch.from_numpy(extracted_feature_dict[batch_idx]).to(self.device)
-                    batch_labels = torch.from_numpy(labels_dict[batch_idx]).long().to(self.device)
+                    batch_feature_map = torch.from_numpy(extracted_feature_dict[batch_idx].cpu().detach().numpy()).to(self.device)
+                    batch_labels = torch.from_numpy(labels_dict[batch_idx].cpu().detach().numpy()).long().to(self.device)
 
                     output_batch = self.model_global(batch_feature_map)
                     loss = self.criterion_CE(output_batch, batch_labels)
