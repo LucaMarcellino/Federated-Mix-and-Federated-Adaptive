@@ -114,7 +114,11 @@ class GKTClientTrainer(object):
             images, labels = data
             test_images, test_labels = images.to(self.device), labels.to(self.device)
             _, extracted_features_test = self.client_model(test_images)
-            extracted_feature_dict_test[batch_idx] = extracted_features_test.cpu().detach().numpy()
-            labels_dict_test[batch_idx] = test_labels.cpu().detach().numpy()
+            if self.device !="cuda":
+                extracted_feature_dict_test[batch_idx] = extracted_features_test.cpu().detach().numpy()
+                labels_dict_test[batch_idx] = test_labels.cpu().detach().numpy()
+            else:
+                extracted_feature_dict_test[batch_idx] = extracted_features_test#.cpu().detach().numpy()
+                labels_dict_test[batch_idx] = test_labels#.cpu().detach().numpy()
 
         return extracted_feature_dict, logits_dict, labels_dict, extracted_feature_dict_test, labels_dict_test
