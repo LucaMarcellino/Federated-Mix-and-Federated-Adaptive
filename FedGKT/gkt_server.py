@@ -53,7 +53,7 @@ class GKTServerTrainer:
         self.client_extracted_feature_dict[idx] = extracted_feature_dict
         self.client_logits_dict[idx] = logits_dict
         self.client_labels_dict[idx] = labels_dict
-        self.client_extracted_feature_dict[idx] = extracted_feature_dict_test
+        self.client_extracted_feature_dict_test[idx] = extracted_feature_dict_test
         self.client_labels_dict_test[idx] = labels_dict_test
 
         print(len(self.client_extracted_feature_dict))
@@ -64,7 +64,7 @@ class GKTServerTrainer:
             self.client_logits_dict[idx].clear()
             self.client_labels_dict[idx].clear()
             self.server_logits_dict[idx].clear()
-        for id in self.client_extracted_feature_dict.keys():
+        for idx in self.client_extracted_feature_dict.keys():
             self.client_extracted_feature_dict[idx].clear()
             self.client_labels_dict_test[idx].clear()
         self.client_extracted_feature_dict.clear()
@@ -77,8 +77,8 @@ class GKTServerTrainer:
     def get_global_logits(self, client_index):
         return self.server_logits_dict[client_index]
 
-    def train(self, idxs_chosen_users):
-        self.train_and_eval(idxs_chosen_users, self.args.epochs)
+    def train(self, round_idx):
+        self.train_and_eval(round_idx, self.args.epochs)
         self.scheduler.step(self.best_acc)
 
     def train_and_eval(self, round_idx, epochs):
@@ -106,6 +106,7 @@ class GKTServerTrainer:
         accTop1_avg = utils.RunningAverage()
 
         for client_index in self.client_extracted_feature_dict.keys():
+
             extracted_feature_dict = self.client_extracted_feature_dict[client_index]
             logits_dict = self.client_logits_dict[client_index]
             labels_dict = self.client_labels_dict[client_index]
@@ -155,7 +156,7 @@ class GKTServerTrainer:
                     batch_feature_map = torch.from_numpy(extracted_feature_dict[batch_idx]).to(self.device)
                     batch_labels = torch.from_numpy(labels_dict[batch_idx]).long().to(self.device)
 
-                    output_batch = self.model(batch_feature_map)
+                    output_batch = self.model_global(batch_feature_map)
                     loss = self.criterion_CE(output_batch, batch_labels)
 
                     metrics = utils.accuracy(output_batch, batch_labels, topk=(1,))

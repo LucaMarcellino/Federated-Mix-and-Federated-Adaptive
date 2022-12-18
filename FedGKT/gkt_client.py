@@ -2,7 +2,7 @@ import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset
 from torch.nn import functional as F
-from reproducibility import make_it_reproducible,seed_worker
+from reproducibility import seed_worker
 
 import numpy as np
 import pandas as pd
@@ -23,7 +23,8 @@ class DatasetSplit(Dataset):
         return image, label
 
 class GKTClientTrainer(object):
-    def __init__(self, client_index, local_training_data, local_test_data, local_sample_number, device, client_model, args):
+    def __init__(self, client_index, local_training_data, local_test_data, local_sample_number, device,
+                 client_model, args):
         self.client_index = client_index
 
         self.local_training_data = local_training_data
@@ -40,6 +41,7 @@ class GKTClientTrainer(object):
 
         self.optimizer = optim.SGD(self.client_model.parameters(), lr=1e-3, momentum=0.9, weight_decay=5e-4)
 
+
         self.criterion_CE = nn.CrossEntropyLoss()
         self.criterion_KL = utils.KL_Loss(self.args.temperature)
 
@@ -50,22 +52,6 @@ class GKTClientTrainer(object):
 
     def update_large_model_logits(self, logits):
         self.server_logits_dict = logits
-    
-    def remove_records(self):
-        for idx in self.client_extracted_feauture_dict.keys():
-            self.client_extracted_feauture_dict[idx].clear()
-            self.client_logits_dict[idx].clear()
-            self.client_labels_dict[idx].clear()
-            self.server_logits_dict[idx].clear()
-        for id in self.client_extracted_feauture_dict_test.keys():
-            self.client_extracted_feauture_dict_test[idx].clear()
-            self.client_labels_dict_test[idx].clear()
-        self.client_extracted_feauture_dict.clear()
-        self.client_logits_dict.clear()
-        self.client_labels_dict.clear()
-        self.server_logits_dict.clear()
-        self.client_extracted_feauture_dict_test.clear()
-        self.client_labels_dict_test.clear()
 
     def train(self):
         # key: batch_index; value: extracted_feature_map
@@ -96,7 +82,7 @@ class GKTClientTrainer(object):
                     large_model_logits = torch.from_numpy(self.server_logits_dict[batch_idx]).to(
                         self.device)
                     loss_kd = self.criterion_KL(log_probs, large_model_logits)
-                    loss = loss_true + self.args['alpha'] * loss_kd
+                    loss = loss_true + self.args.partition_alpha * loss_kd
                 else:
                     loss = loss_true
 

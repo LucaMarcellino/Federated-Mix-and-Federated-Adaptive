@@ -75,7 +75,7 @@ def get_datasets(augmentation=False):
             transforms.ToTensor(), transforms.Normalize(cifar10_mean, cifar10_std)])
         trainset.transform = transform_train
     else:
-        trainset.transfrom = transform
+        trainset.transform = transform
     testset.transform = transform
 
     return trainset, testset
