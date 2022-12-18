@@ -141,11 +141,11 @@ plt.show()
 #---------- NONIID Unbalaced----------#
 
 #---------- Import DataBase ----------#
-dataAvgBN = pd.read_csv(r'C:\Users\luki_\OneDrive\Desktop\Politecnico\Magistrale\Primo anno\Secondo Semestre\Machine learnign and Deep learning\Federated_mix_git\Project6\Results\FedMix-Avg_unbalanced_results\FedAVG_5_local_ep_Norm_Batch Norm_iid_0_lr_0.01_mom_0.5_epochs_50.csv')
-dataAvgGN = pd.read_csv(r'C:\Users\luki_\OneDrive\Desktop\Politecnico\Magistrale\Primo anno\Secondo Semestre\Machine learnign and Deep learning\Federated_mix_git\Project6\Results\FedMix-Avg_unbalanced_results\FedAVG_5_local_ep_Norm_Group Norm_iid_0_lr_0.01_mom_0.5_epochs_50.csv')
-dataMix0505 = pd.read_csv(r"C:\Users\luki_\OneDrive\Desktop\Politecnico\Magistrale\Primo anno\Secondo Semestre\Machine learnign and Deep learning\Federated_mix_git\Project6\Results\FedMix-Avg_unbalanced_results\FedMix_5_local_ep_iid 0_lr 0.01_mom 0.5_epochs 50_alphaB 0.5_alphaG 0.5.csv")
-dataMix0109 = pd.read_csv(r"C:\Users\luki_\OneDrive\Desktop\Politecnico\Magistrale\Primo anno\Secondo Semestre\Machine learnign and Deep learning\Federated_mix_git\Project6\Results\FedMix-Avg_unbalanced_results\FedMix_5_local_ep_iid 0_lr 0.01_mom 0.5_epochs 50_alphaB 0.1_alphaG 0.9.csv")
-dataMix0901 = pd.read_csv(r"C:\Users\luki_\OneDrive\Desktop\Politecnico\Magistrale\Primo anno\Secondo Semestre\Machine learnign and Deep learning\Federated_mix_git\Project6\Results\FedMix-Avg_unbalanced_results\FedMix_5_local_ep_iid 0_lr 0.01_mom 0.5_epochs 50_alphaB 0.9_alphaG 0.1.csv")
+dataAvgBN = pd.read_csv(r'Results\FedMix-Avg_unbalanced_results\FedAVG_5_local_ep_Norm_Batch Norm_iid_0_lr_0.01_mom_0.5_epochs_50.csv')
+dataAvgGN = pd.read_csv(r'Results\FedMix-Avg_unbalanced_results\FedAVG_5_local_ep_Norm_Group Norm_iid_0_lr_0.01_mom_0.5_epochs_50.csv')
+dataMix0505 = pd.read_csv(r"Results\FedMix-Avg_unbalanced_results\FedMix_5_local_ep_iid 0_lr 0.01_mom 0.5_epochs 50_alphaB 0.5_alphaG 0.5.csv")
+dataMix0109 = pd.read_csv(r"Results\FedMix-Avg_unbalanced_results\FedMix_5_local_ep_iid 0_lr 0.01_mom 0.5_epochs 50_alphaB 0.1_alphaG 0.9.csv")
+dataMix0901 = pd.read_csv(r"Results\FedMix-Avg_unbalanced_results\FedMix_5_local_ep_iid 0_lr 0.01_mom 0.5_epochs 50_alphaB 0.9_alphaG 0.1.csv")
 
 #---------- Plot the graphs ----------#
 plt.figure(figsize=(10,10))
