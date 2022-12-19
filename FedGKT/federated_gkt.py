@@ -93,5 +93,5 @@ test_data["seed"] = seed
 df_train = pd.concat([df_train, train_data], ignore_index=True)
 df_test = pd.concat([df_test, test_data], ignore_index=True)
 
-df_train.to_csv(f"fedgkt_train_results_iid_{args.iid}_unbalance_{args.unequal}.csv", index=False)
-df_test.to_csv(f"fedgkt_test_results_iid_{args.iid}_unbalance_{args.unequal}.csv", index=False)
+df_train.to_csv(f"fedgkt_train_results_Norm_{args.norm_layer}_iid_{args.iid}_unbalance_{args.unequal}.csv", index=False)
+df_test.to_csv(f"fedgkt_test_results_Norm_{args.norm_layer}_iid_{args.iid}_unbalance_{args.unequal}.csv", index=False)
