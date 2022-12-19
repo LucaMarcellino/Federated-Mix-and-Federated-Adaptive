@@ -32,7 +32,8 @@ args_server = {
 args_client={
     'temperature': 3,
     'epochs_client': args.epochs_client,
-    'alpha': 0.5
+    'alpha': 0.5,
+    'local_bs': args.local_bs
 }
 
 ##### metric = []

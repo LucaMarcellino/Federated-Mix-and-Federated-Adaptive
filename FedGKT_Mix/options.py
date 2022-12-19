@@ -13,7 +13,7 @@ def args_parser():
                         help="number of users: K")
     parser.add_argument('--frac', type=float, default=0.1,
                         help='the fraction of clients: C')
-    parser.add_argument('--local_bs', type=int, default=10,
+    parser.add_argument('--local_bs', type=int, default=16,
                         help="local batch size: B")
     parser.add_argument('--alpha_b', type=float, default=0.9)
     parser.add_argument('--alpha_g', type=float, default=0.1)
