@@ -8,12 +8,13 @@ from sampling import get_user_groups
 from trainers import GKTServerTrainer, GKTClientTrainer
 from reproducibility import make_it_reproducible
 from options import args_parser
+from tqdm import tqdm
 
 device = 'cuda' if torch.cuda.is_available else 'cpu'
 
 args = args_parser()
 
-seed = 0
+seed = args.seed
 
 client_number = args.num_users
 norm_type = args.norm_layer
@@ -24,13 +25,13 @@ ROUNDS = args.communication_rounds
 
 args_server = {
     'temperature': 3,
-    'epochs_server': 10,
+    'epochs_server': args.epochs_server,
     'alpha': 0.5
 }
 
 args_client={
     'temperature': 3,
-    'epochs_client': 1,
+    'epochs_client': args.epochs_client,
     'alpha': 0.5
 }
 
@@ -55,7 +56,7 @@ for client_idx in range(client_number):
     clients.append(GKTClientTrainer(client_idx, trainset, testset,
                                     user_groups[client_idx], device, client_model, args_client))
 
-for round in range(ROUNDS):
+for round in tqdm(range(ROUNDS)):
     print("Communication round: ", round+1)
     m = max(int(participation_frac*client_number), 1)
     chosen_users = np.random.choice(range(client_number), m, replace=False)
