@@ -24,7 +24,7 @@ ROUNDS = args.communication_rounds
 
 args_server = {
     'temperature': 3,
-    'epochs_server': 1,
+    'epochs_server': 10,
     'alpha': 0.5
 }
 
