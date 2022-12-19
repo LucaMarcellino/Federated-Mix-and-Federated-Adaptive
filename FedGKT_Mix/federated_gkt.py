@@ -42,11 +42,11 @@ df_test = pd.DataFrame()
 
 make_it_reproducible(seed)
 # server, reproducibility demanded to the server
-server_model = ResNet49(norm_type)
+server_model = ResNet49(norm_type, args.alpha_b,args.alpha_g)
 server_trainer = GKTServerTrainer(client_number, device, server_model, args_server, seed=seed)
 
 # client
-client_model = ResNet8(norm_type)
+client_model = ResNet8(norm_type, args.alpha_b,args.alpha_g)
 trainset, testset = get_datasets(augmentation=True)
 user_groups, _ = get_user_groups(trainset, iid=iid, unbalanced=unbalanced, tot_users=client_number)
 
