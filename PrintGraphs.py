@@ -109,7 +109,7 @@ plt.legend(loc="lower right")
 plt.show()
 
 
-#---------------------------------------------------------------- FEDGKT ----------------------------------------------------------------------------------------#
+#---------------------------------------------------------------- FEDGKT 128 local bs----------------------------------------------------------------------------------------#
 
 
 #---------- NONIID----------#
@@ -136,8 +136,8 @@ plt.show()
 
 #---------- IID----------#
 #---------- Import DataBase ----------#
-dataAvgBN = pd.read_csv("Results\FedGKT_results\FedGKT_Batch_Norm_IID.csv")
-dataAvgGN = pd.read_csv("Results\FedGKT_results\FedGKT_Group_Norm_IID.csv")
+dataAvgBN = pd.read_csv("Results\FedGKT_results\_128 local_bs\FedGKT_Batch_Norm_IID.csv")
+dataAvgGN = pd.read_csv("Results\FedGKT_results\_128 local_bs\FedGKT_Group_Norm_IID.csv")
 #dataMix0505 = pd.read_csv("Results\FedMIX_results\FedMix_5_local_ep_iid_1_lr_0.01_mom_0.5_epochs_50_alphaB_0.5_alphaG_0.5.csv")
 #dataMix0109 = pd.read_csv("Results\FedMIX_results\FedMix_5_local_ep_iid_1_lr_0.01_mom_0.5_epochs_50_alphaB_0.1_alphaG_0.9.csv")
 #dataMix0901 = pd.read_csv("Results\FedMIX_results\FedMix_5_local_ep_iid_1_lr_0.01_mom_0.5_epochs_50_alphaB_0.9_alphaG_0.1.csv")
@@ -149,7 +149,7 @@ plt.plot(dataAvgGN["round"],dataAvgGN["test_acc"],marker = "o",markersize=3.5,li
 #plt.plot(dataMix0109["Epochs"],dataMix0109["Test accuracy"],marker = "o",markersize=3.5, label = 'FedGKTMix IID alpha_b=0.1 alpha_g=0.9')
 #plt.plot(dataMix0901["Epochs"],dataMix0901["Test accuracy"],marker = "o",markersize=3.5, label = 'FedGKTMix IID alpha_b=0.9 alpha_g=0.1')
 plt.ylim(bottom = 0)
-plt.title("Comparison between methods with IID in FedGKT setting")
+plt.title("Comparison between methods with IID in FedGKT setting 128 l_bs")
 plt.xlabel("Communication rounds")
 plt.ylabel("Test Accuracy")
 plt.grid()
@@ -198,13 +198,13 @@ plt.legend(loc="lower right")
 plt.show()
 
 
-#---------------------------------------------------------------- FEDGKT ----------------------------------------------------------------------------------------#
+#---------------------------------------------------------------- FEDGKT 128 local bs----------------------------------------------------------------------------------------#
 
 
 #---------- NONIID Unbalaced----------#
 #---------- Import DataBase ----------#
-dataAvgBN = pd.read_csv("Results\FedGKT_results\FedGKT_Batch_Norm_Non_IID_Unbalanced.csv")
-dataAvgGN = pd.read_csv("Results\FedGKT_results\FedGKT_Group_Norm_Non_IID_Unbalanced.csv")
+dataAvgBN = pd.read_csv("Results\FedGKT_results\_128 local_bs\FedGKT_Batch_Norm_Non_IID_Unbalanced.csv")
+dataAvgGN = pd.read_csv("Results\FedGKT_results\_128 local_bs\FedGKT_Group_Norm_Non_IID_Unbalanced.csv")
 #dataMix0505 = pd.read_csv("Results\FedMIX_results\FedMix_5_local_ep_iid_1_lr_0.01_mom_0.5_epochs_50_alphaB_0.5_alphaG_0.5.csv")
 #dataMix0109 = pd.read_csv("Results\FedMIX_results\FedMix_5_local_ep_iid_1_lr_0.01_mom_0.5_epochs_50_alphaB_0.1_alphaG_0.9.csv")
 #dataMix0901 = pd.read_csv("Results\FedMIX_results\FedMix_5_local_ep_iid_1_lr_0.01_mom_0.5_epochs_50_alphaB_0.9_alphaG_0.1.csv")
@@ -216,7 +216,7 @@ plt.plot(dataAvgGN["round"],dataAvgGN["test_acc"],marker = "o",markersize=3.5,li
 #plt.plot(dataMix0109["Epochs"],dataMix0109["Test accuracy"],marker = "o",markersize=3.5, label = 'FedGKTMix NonIID Unbalanced alpha_b=0.1 alpha_g=0.9')
 #plt.plot(dataMix0901["Epochs"],dataMix0901["Test accuracy"],marker = "o",markersize=3.5, label = 'FedGKTMix NonIID Unbalanced alpha_b=0.9 alpha_g=0.1')
 plt.ylim(bottom = 0)
-plt.title("Comparison between methods with NonIID Unbalanced in FedGKT setting")
+plt.title("Comparison between methods with NonIID Unbalanced in FedGKT setting 128 l_bs")
 plt.xlabel("Communication rounds")
 plt.ylabel("Test Accuracy")
 plt.grid()
