@@ -7,28 +7,33 @@ from datasets import get_datasets
 from sampling import get_user_groups
 from trainers import GKTServerTrainer, GKTClientTrainer
 from reproducibility import make_it_reproducible
+from options import args_parser
+from tqdm import tqdm
 
 device = 'cuda' if torch.cuda.is_available else 'cpu'
 
-seed = 0
+args = args_parser()
 
-client_number = 100
-norm_type = 'Group Norm'
-participation_frac = 0.1
-iid = True
-unbalanced = False
-ROUNDS = 10
+seed = args.seed
+
+client_number = args.num_users
+norm_type = args.norm_layer
+participation_frac = args.frac
+iid = args.iid
+unbalanced = args.unequal
+ROUNDS = args.communication_rounds
 
 args_server = {
     'temperature': 3,
-    'epochs_server': 10,
+    'epochs_server': args.epochs_server,
     'alpha': 0.5
 }
 
 args_client={
     'temperature': 3,
-    'epochs_client': 1,
-    'alpha': 0.5
+    'epochs_client': args.epochs_client,
+    'alpha': 0.5,
+    'local_bs': args.local_bs
 }
 
 ##### metric = []
@@ -36,59 +41,57 @@ args_client={
 df_train = pd.DataFrame()
 df_test = pd.DataFrame()
 
-for iid, unbalanced, norm in [
-        [True, False, "Batch Norm"],[False, False, "Batch Norm"],[False, True, "Batch Norm"],
-        [True, False, "Group Norm"],[False, False, "Group Norm"],[False, True, "Group Norm"]]:
-    make_it_reproducible(seed)
-    # server, reproducibility demanded to the server
-    server_model = ResNet49(norm)
-    server_trainer = GKTServerTrainer(client_number, device, server_model, args_server, seed=seed)
 
-    # client
-    client_model = ResNet8(norm)
-    trainset, testset = get_datasets(augmentation=True)
-    user_groups, _ = get_user_groups(trainset, iid=iid, unbalanced=unbalanced, tot_users=client_number)
+make_it_reproducible(seed)
+# server, reproducibility demanded to the server
+server_model = ResNet49(norm_type)
+server_trainer = GKTServerTrainer(client_number, device, server_model, args_server, seed=seed)
 
-    clients = []
-    for client_idx in range(client_number):
-        clients.append(GKTClientTrainer(client_idx, trainset, testset,
-                                        user_groups[client_idx], device, client_model, args_client))
+# client
+client_model = ResNet8(norm_type)
+trainset, testset = get_datasets(augmentation=True)
+user_groups, _ = get_user_groups(trainset, iid=iid, unbalanced=unbalanced, tot_users=client_number)
 
-    for round in range(ROUNDS):
-        print("Communication round: ", round+1)
-        m = max(int(participation_frac*client_number), 1)
-        chosen_users = np.random.choice(range(client_number), m, replace=False)
-        print(f"Chosen users: {chosen_users}")
-        for idx in chosen_users:
-            extracted_features_dict, extracted_logits_dict, labels_dict,\
-            extracted_features_dict_test, labels_dict_test = clients[idx].train()
+clients = []
+for client_idx in range(client_number):
+    clients.append(GKTClientTrainer(client_idx, trainset, testset,
+                                    user_groups[client_idx], device, client_model, args_client))
 
-            server_trainer.add_local_trained_result(idx, extracted_features_dict, extracted_logits_dict, labels_dict,\
-            extracted_features_dict_test, labels_dict_test)
+for round in tqdm(range(ROUNDS)):
+    print("Communication round: ", round+1)
+    m = max(int(participation_frac*client_number), 1)
+    chosen_users = np.random.choice(range(client_number), m, replace=False)
+    print(f"Chosen users: {chosen_users}")
+    for idx in chosen_users:
+        extracted_features_dict, extracted_logits_dict, labels_dict,\
+        extracted_features_dict_test, labels_dict_test = clients[idx].train()
 
-        server_trainer.train(round)
+        server_trainer.add_local_trained_result(idx, extracted_features_dict, extracted_logits_dict, labels_dict,\
+        extracted_features_dict_test, labels_dict_test)
 
-        for idx in chosen_users:
-            global_logits = server_trainer.get_global_logits(idx)
-            clients[idx].update_large_model_logits(global_logits)
-        server_trainer.remove_records()
+    server_trainer.train(round)
 
-    train_metrics, test_metrics = server_trainer.get_metrics_lists()
-    
-    train_data = pd.DataFrame(train_metrics)
-    train_data["norm"] = "BN" if norm == "Batch Norm" else "GN"
-    train_data["independence"] = "iid" if iid else "noniid"
-    train_data["balancement"] = "unbalanced" if unbalanced else "balanced"
-    train_data["seed"] = seed
+    for idx in chosen_users:
+        global_logits = server_trainer.get_global_logits(idx)
+        clients[idx].update_large_model_logits(global_logits)
+    server_trainer.remove_records()
 
-    test_data = pd.DataFrame(test_metrics)
-    test_data["norm"] = "BN" if norm == "Batch Norm" else "GN"
-    test_data["independence"] = "iid" if iid else "noniid"
-    test_data["balancement"] = "unbalanced" if unbalanced else "balanced"
-    test_data["seed"] = seed
+train_metrics, test_metrics = server_trainer.get_metrics_lists()
 
-    df_train = pd.concat([df_train, train_data], ignore_index=True)
-    df_test = pd.concat([df_test, test_data], ignore_index=True)
+train_data = pd.DataFrame(train_metrics)
+train_data["norm"] = "BN" if norm_type == "Batch Norm" else "GN"
+train_data["independence"] = "iid" if iid else "noniid"
+train_data["balancement"] = "unbalanced" if unbalanced else "balanced"
+train_data["seed"] = seed
 
-df_train.to_csv("./results/federated_gkt/fedgkt_train_results.csv", index=False)
-df_test.to_csv("./results/federated_gkt/fedgkt_test_results.csv", index=False)
+test_data = pd.DataFrame(test_metrics)
+test_data["norm"] = "BN" if norm_type == "Batch Norm" else "GN"
+test_data["independence"] = "iid" if iid else "noniid"
+test_data["balancement"] = "unbalanced" if unbalanced else "balanced"
+test_data["seed"] = seed
+
+df_train = pd.concat([df_train, train_data], ignore_index=True)
+df_test = pd.concat([df_test, test_data], ignore_index=True)
+
+df_train.to_csv(f"fedgkt_train_results_iid_{args.iid}_unbalance_{args.unequal}.csv", index=False)
+df_test.to_csv(f"fedgkt_test_results_iid_{args.iid}_unbalance_{args.unequal}.csv", index=False)
