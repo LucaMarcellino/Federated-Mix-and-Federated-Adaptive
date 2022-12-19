@@ -229,7 +229,7 @@ class GKTClientTrainer(object):
         epoch_loss = []
         for epoch in range(self.args['epochs_client']):
             batch_loss = []
-            trainloader = DataLoader(DatasetSplit(self.local_training_data, self.local_sample_number), batch_size = 128, shuffle=True, num_workers=2, worker_init_fn = seed_worker, generator=g)
+            trainloader = DataLoader(DatasetSplit(self.local_training_data, self.local_sample_number), batch_size = self.args['local_bs'], shuffle=True, num_workers=2, worker_init_fn = seed_worker, generator=g)
             for batch_idx, data in enumerate(trainloader):
                 images, labels = data
                 images, labels = images.to(self.device), labels.to(self.device)
@@ -267,7 +267,7 @@ class GKTClientTrainer(object):
             logits_dict[batch_idx] = log_probs
             labels_dict[batch_idx] = labels.cpu().detach().numpy()
 
-        testloader = DataLoader(self.local_test_data, batch_size = 128, shuffle=True, num_workers=2, worker_init_fn = seed_worker, generator=g)
+        testloader = DataLoader(self.local_test_data, batch_size = self.args['local_bs'], shuffle=True, num_workers=2, worker_init_fn = seed_worker, generator=g)
         for batch_idx, data in enumerate(testloader):
             images, labels = data
             test_images, test_labels = images.to(self.device), labels.to(self.device)
