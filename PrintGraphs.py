@@ -165,7 +165,7 @@ plt.show()
 
 #---------- IID----------#
 #---------- Import DataBase ----------#
-dataAvgBN = pd.read_csv("Results\FedGKT_results\_16 local_bs\Fedgkt_test_results_Norm_Batch Norm_iid_0_unbalance_1.csv")
+dataAvgBN = pd.read_csv("Results\FedGKT_results\_16 local_bs\Fedgkt_test_results_Norm_Batch Norm_iid_1_unbalance_0.csv")
 dataAvgGN = pd.read_csv("Results\FedGKT_results\_16 local_bs\Fedgkt_test_results_Norm_Group Norm_iid_1_unbalance_0.csv")
 dataMix0505 = pd.read_csv("Results\FedGKT_results\_16 local_bs\Fedgkt_test_results_iid_1_unbalance_0_alphaB_0.5_alphaG_0.5.csv")
 dataMix0109 = pd.read_csv("Results\FedGKT_results\_16 local_bs\Fedgkt_test_results_iid_1_unbalance_0_alphaB_0.1_alphaG_0.9.csv")
