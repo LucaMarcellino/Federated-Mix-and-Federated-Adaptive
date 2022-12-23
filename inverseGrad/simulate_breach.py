@@ -1,4 +1,3 @@
-
 """
 Control script to launch some attack that attempts to breach privacy federated learning in a given case
 with the overall goal of recovering user data, e.g. image data, directly as much as possible.
