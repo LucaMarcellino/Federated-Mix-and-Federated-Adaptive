@@ -14,7 +14,7 @@ seed = 0
 g = torch.Generator()
 
 #INPUT PARAMETERS
-epochs = 50
+epochs = 1
 norm_list = ["Batch Norm", "Group Norm"]
 opt_list = ["sgd","adam"]
 lr_list = [0.001,0.01]
