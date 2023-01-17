@@ -9,6 +9,7 @@ from reproducibility import make_it_reproducible,seed_worker
 from utils import get_datasets
 from tqdm import tqdm
 
+torch.use_deterministic_algorithms(False)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 seed = 0
