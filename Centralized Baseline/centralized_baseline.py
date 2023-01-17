@@ -3,13 +3,11 @@ import torch.nn as nn
 import torch.optim as optim
 import pandas as pd
 
-from torchsummary import summary
 from models import ResNet50
 from reproducibility import make_it_reproducible,seed_worker
 from utils import get_datasets
 from tqdm import tqdm
 
-torch.use_deterministic_algorithms(False)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 seed = 0
@@ -36,13 +34,6 @@ output_metrics["Weight_decay"] = list()
 output_metrics["Train_Loss"] = list()
 output_metrics["Test_Loss"] = list()
 output_metrics["Test_Accuracy"] = list()
-
-#Summary of paramters
-print("BATCH NORM PARAMTERS")
-summary(ResNet50(norm_list[0]).to(device) , (3, 32, 32) )
-print("GROUP NORM PARAMETERS")
-summary(ResNet50(norm_list[1]).to(device) , (3, 32, 32) )
-
 
 for norm in norm_list:
     for opt in opt_list:
