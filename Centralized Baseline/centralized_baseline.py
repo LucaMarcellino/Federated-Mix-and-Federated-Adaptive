@@ -14,12 +14,12 @@ seed = 0
 g = torch.Generator()
 
 #INPUT PARAMETERS
-epochs = 1
+epochs = 50
 norm_list = ["Batch Norm", "Group Norm"]
 opt_list = ["sgd","adam"]
-lr_list = [0.001,0.01,0.1]
-momentum_list = [0.0,0.5,0.9]
-wd_list = [0,1e-5]
+lr_list = [0.001,0.01]
+momentum_list = [0.5,0.9]
+wd_list = [1e-5]
 
 trainset,testset = get_datasets()
 criterion = nn.CrossEntropyLoss()
