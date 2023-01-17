@@ -18,7 +18,7 @@ epochs = 1
 norm_list = ["Batch Norm", "Group Norm"]
 opt_list = ["sgd","adam"]
 lr_list = [0.001,0.01]
-momentum_list = [0.5,0.9]
+momentum_list = [0.5]
 wd_list = [1e-5]
 
 trainset,testset = get_datasets()
