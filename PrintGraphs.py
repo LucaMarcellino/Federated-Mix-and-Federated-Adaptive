@@ -82,8 +82,8 @@ plt.title("Comparison between methods with NonIID in FedMix settings ")
 plt.xlabel("Epochs")
 plt.ylabel("Test Accuracy")
 plt.grid()
-plt.savefig("Images/Comparison between methods with NonIID in FedMix settings.png")
 plt.legend(loc="lower right")
+plt.savefig("Images/Comparison between methods with NonIID in FedMix settings.png")
 plt.show()
 
 
