@@ -77,7 +77,7 @@ config = dict(signed=True,
               scoring_choice='loss')
 
 rec_machine = Gradient_Attack.FedAvgReconstructor(model, (dm, ds), local_steps, local_lr, config,
-                                             use_updates=use_updates)
+                                             use_updates=use_updates, num_images=num_images)
 output, _ = rec_machine.reconstruct(input_parameters, labels, img_shape=(3, 32, 32))
 
 plot(output,filename="output.png")
