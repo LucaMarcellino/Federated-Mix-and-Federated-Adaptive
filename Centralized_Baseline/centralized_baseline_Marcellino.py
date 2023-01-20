@@ -45,6 +45,7 @@ for norm in norm_list:
                     print("Norm : {}".format(norm))
                     print("Optimizer : {}".format(opt))
                     print("Learning Rate : {}".format(lr))
+                    print("Momentum: {}".format(momentum))
                     print("Weight_decay : {}".format(wd))
 
 
