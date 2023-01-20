@@ -20,7 +20,7 @@ def plot(tensor, filename=None):
     if filename is not None:
         plt.savefig(filename, bbox_inches="tight")
 
-for idx in tqdm([5,7,9]):
+for idx in tqdm([7,15,47]):
     num_images = 1
     local_lr = 1e-2
     local_steps = 5
@@ -42,7 +42,6 @@ for idx in tqdm([5,7,9]):
     ground_truth, labels = [], []
     while len(labels) < num_images:
         img, label = validloader.dataset[idx]
-        idx += 1
         if label not in labels:
             labels.append(torch.as_tensor((label,), device=setup['device']))
             ground_truth.append(img.to(**setup))
@@ -68,7 +67,7 @@ for idx in tqdm([5,7,9]):
                 lr=0.01,
                 optim='sgd',
                 restarts=1,
-                max_iterations=2_000,
+                max_iterations=8_000,
                 total_variation=1e-6,
                 init='randn',
                 filter='none',
