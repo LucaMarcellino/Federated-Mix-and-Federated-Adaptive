@@ -16,7 +16,7 @@ g = torch.Generator()
 #INPUT PARAMETERS
 epochs = 50
 norm_list = ["Group Norm"]#, "Batch Norm"]
-opt_list = ["sgd"]#,"adam"]
+opt_list = ["adam"]#,"sgd"]
 lr_list = [0.001,0.01]
 momentum_list = [0.5,0.9]
 wd_list = [0]
@@ -126,7 +126,7 @@ for norm in norm_list:
 
 
 output_data = pd.DataFrame(output_metrics)
-output_data.to_csv("Centralized_results_sgd_Villani.csv", index = False)
+output_data.to_csv("Centralized_results_adam_Villani.csv", index = False)
 
                         
 
