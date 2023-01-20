@@ -6,7 +6,7 @@ import torchvision
 import torchvision.transforms as transforms
 
 import os
-from utils.datasets import *
+from FedAvg.utlis import *
 
 from .loss import Classification
 
