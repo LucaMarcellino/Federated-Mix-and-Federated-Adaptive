@@ -52,8 +52,6 @@ if __name__ == '__main__':
         global_net.train()
         m = max(int(args.frac * args.num_users),1)
         idxs_users = np.random.choice(range(args.num_users),m, replace=False)
-        print(idxs_users)
-        print("Train...")
         for idx in idxs_users:
             local_net = LocalUpdate(dataset=train_dataset, idxs=user_groups[idx], local_batch_size=int(local_bs[idx]),\
                 local_epochs=args.local_ep, worker_init_fn=seed_worker(0), generator=g, device=device)
@@ -67,7 +65,6 @@ if __name__ == '__main__':
         global_weights = average_weights(local_weights, counts)
         global_net.load_state_dict(global_weights)
 
-        print("Test...")
         total, correct = 0, 0 
         global_net.eval()
         with torch.no_grad():
@@ -90,4 +87,4 @@ if __name__ == '__main__':
     
     train_dict = {'Epochs': np.array(range(args.epochs)),'Train Loss Average' : np.array(train_loss_avg),'Test Loss': np.array(test_loss_avg), 'Test accuracy': np.array(test_accuracy)}
     train_csv = pd.DataFrame(train_dict)
-    train_csv.to_csv(f'FedAVG_{args.local_ep}_local_ep_Norm:{args.norm_layer}_iid:{args.iid}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
+    train_csv.to_csv(f'FedAVG_{args.local_ep}_local_ep_Norm:{args.norm_layer}_iid:{args.iid}_unbalanced:{args.unequal}_lr:{args.lr}_mom:{args.momentum}_epochs:{args.epochs}.csv', index = False)
