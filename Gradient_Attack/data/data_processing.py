@@ -14,6 +14,8 @@ PIN_MEMORY = True
 NON_BLOCKING = False
 BENCHMARK = True
 MULTITHREAD_DATAPROCESSING = 4
+cifar10_mean = [0.4914672374725342, 0.4822617471218109, 0.4467701315879822]
+cifar10_std = [0.24703224003314972, 0.24348513782024384, 0.26158785820007324]
 
 def construct_dataloaders(dataset, defs, data_path='~/data', shuffle=True, normalize=True):
     """Return a dataloader with given dataset and augmentation, normalize data?."""
