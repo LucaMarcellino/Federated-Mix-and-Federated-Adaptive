@@ -50,7 +50,7 @@ while len(labels) < num_images:
 ground_truth = torch.stack(ground_truth)
 labels = torch.cat(labels)
 
-print(plot(ground_truth))
+plot(ground_truth)
 print([validloader.dataset.classes[l] for l in labels])
 
 
@@ -80,4 +80,4 @@ rec_machine = Gradient_Attack.FedAvgReconstructor(model, (dm, ds), local_steps, 
                                              use_updates=use_updates)
 output, _ = rec_machine.reconstruct(input_parameters, labels, img_shape=(3, 32, 32))
 
-print(plot(output))
+plot(output)
