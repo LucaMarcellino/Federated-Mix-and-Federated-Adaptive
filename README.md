@@ -7,7 +7,7 @@ This repo was built by [Luca Marcellino](https://github.com/LucaMarcellino), [Lu
 
 In this repository you will find different implementation of the Federated Learning methods. First you can find an implementation related to the FederatedAVG and another related to FedGKT.
 
-Finally you can find an new implementation, to the best of our knowledge, that we called **Federated Mix**.
+Finally you can find two possible new implementation, to the best of our knowledge, that we called **Federated Mix** and **Federared Adaptive**.
 
 ## Federated Mix
 
