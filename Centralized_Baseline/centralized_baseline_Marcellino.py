@@ -18,8 +18,8 @@ epochs = 50
 norm_list = ["Batch Norm"]#, "Group Norm"]
 opt_list = ["sgd","adam"]
 lr_list = [0.001,0.01]
-momentum_list = [0.5]
-wd_list = [1e-5]
+momentum_list = [0.5,0.9]
+wd_list = [1e-5,0]
 
 trainset,testset = get_datasets()
 criterion = nn.CrossEntropyLoss()
@@ -39,7 +39,7 @@ for norm in norm_list:
     for opt in opt_list:
         for lr in lr_list:
             for momentum in momentum_list:
-                for wd in wd_list:
+                for wd in tqdm(wd_list):
 
                     print("Running test with:")
                     print("Norm : {}".format(norm))
@@ -110,6 +110,9 @@ for norm in norm_list:
                             test_loss_avg = sum(test_loss) / len(test_loss)
                             test_accuracy = correct / total
 
+                        if epoch + 1 % 5 == 0:
+                            print("Epochs = {} | Train loss = {} | Test loss = {} | Test accuracy = {}".format(epoch + 1,train_loss_avg, test_loss_avg, test_accuracy))
+                        
                         output_metrics["Epoch"].append(epoch + 1)
                         output_metrics["Norm"].append(norm)
                         output_metrics["Opt"].append(opt)
@@ -121,12 +124,11 @@ for norm in norm_list:
                         output_metrics["Test_Accuracy"].append(test_accuracy)
 
                         scheduler.step()
-                        if epoch + 1 % 5 == 0:
-                            print("Epochs = {} | Train loss = {} | Test loss = {} | Test accuracy = {}".format(epoch + 1,train_loss_avg, test_loss_avg, test_accuracy))
+   
 
 
 output_data = pd.DataFrame(output_metrics)
-output_data.to_csv("Centralized_results.csv", index = False)
+output_data.to_csv("Centralized_results_Marcellino.csv", index = False)
 
                         
 

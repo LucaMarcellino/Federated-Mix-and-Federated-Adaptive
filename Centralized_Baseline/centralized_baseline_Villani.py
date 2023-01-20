@@ -18,8 +18,8 @@ epochs = 50
 norm_list = ["Group Norm"]#, "Batch Norm"]
 opt_list = ["sgd","adam"]
 lr_list = [0.001,0.01]
-momentum_list = [0.5]
-wd_list = [1e-5]
+momentum_list = [0.5,0.9]
+wd_list = [1e-5,0]
 
 trainset,testset = get_datasets()
 criterion = nn.CrossEntropyLoss()
@@ -126,7 +126,7 @@ for norm in norm_list:
 
 
 output_data = pd.DataFrame(output_metrics)
-output_data.to_csv("Centralized_results.csv", index = False)
+output_data.to_csv("Centralized_results_Villani.csv", index = False)
 
                         
 
