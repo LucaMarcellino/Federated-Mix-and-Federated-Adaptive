@@ -50,10 +50,10 @@ while len(labels) < num_images:
 ground_truth = torch.stack(ground_truth)
 labels = torch.cat(labels)
 
-plot(ground_truth)
+plot(ground_truth, filename="gt.png")
 print([validloader.dataset.classes[l] for l in labels])
 
-
+"""
 model.zero_grad()
 target_loss, _, _ = loss_fn(model(ground_truth), labels)
 input_parameters = Gradient_Attack.reconstruction_algorithms.loss_steps(model, ground_truth, labels, 
@@ -81,3 +81,5 @@ rec_machine = Gradient_Attack.FedAvgReconstructor(model, (dm, ds), local_steps, 
 output, _ = rec_machine.reconstruct(input_parameters, labels, img_shape=(3, 32, 32))
 
 plot(output)
+
+"""
