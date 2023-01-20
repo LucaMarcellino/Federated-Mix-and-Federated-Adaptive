@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 import Gradient_Attack
 from FedAvg.models import ResNet50
+from torchvision.models import resnet50
 from Centralized_Baseline.utils import datasets
 
 def plot(tensor, filename=None):
@@ -19,7 +20,7 @@ def plot(tensor, filename=None):
         plt.savefig(filename, bbox_inches="tight")
 
 num_images = 1
-local_lr = 1e-4
+local_lr = 1e-2
 local_steps = 5
 use_updates = True
 
@@ -28,9 +29,9 @@ defs = Gradient_Attack.training_strategy('conservative')
 
 loss_fn, trainloader, validloader =  Gradient_Attack.construct_dataloaders('CIFAR10', defs)
 
-checkpoint = torch.load("/kaggle/input/fedavg-100pt/fedavg_100.pt")  # not available on github due to size restrictions
-model = ResNet50().to(**setup)
-model.load_state_dict(checkpoint["model_state_dict"])
+#checkpoint = torch.load("/kaggle/input/fedavg-100pt/fedavg_100.pt")  # not available on github due to size restrictions
+model = resnet50(pretrained = True).to(**setup)
+#model.load_state_dict(checkpoint["model_state_dict"])
 model.eval()
 
 dm = torch.as_tensor(datasets.cifar10_mean, **setup)[:, None, None]
@@ -63,10 +64,10 @@ config = dict(signed=True,
               cost_fn='sim',
               indices='def',
               weights='equal',
-              lr=0.1,
-              optim='adam',
+              lr=0.01,
+              optim='sgd',
               restarts=1,
-              max_iterations=8_000,
+              max_iterations=2_000,
               total_variation=1e-6,
               init='randn',
               filter='none',
