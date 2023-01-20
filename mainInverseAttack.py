@@ -1,5 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 import Gradient_Attack
 from FedAvg.models import ResNet50
@@ -19,66 +20,64 @@ def plot(tensor, filename=None):
     if filename is not None:
         plt.savefig(filename, bbox_inches="tight")
 
-num_images = 3
-local_lr = 1e-2
-local_steps = 5
-use_updates = True
-cifar10_mean = [0.4914672374725342, 0.4822617471218109, 0.4467701315879822]
-cifar10_std = [0.24703224003314972, 0.24348513782024384, 0.26158785820007324]
+for idx in tqdm([5,7,9]):
+    num_images = 1
+    local_lr = 1e-2
+    local_steps = 5
+    use_updates = True
+    cifar10_mean = [0.4914672374725342, 0.4822617471218109, 0.4467701315879822]
+    cifar10_std = [0.24703224003314972, 0.24348513782024384, 0.26158785820007324]
 
-setup = Gradient_Attack.utils.system_startup()
-defs = Gradient_Attack.training_strategy('conservative')
+    setup = Gradient_Attack.utils.system_startup()
+    defs = Gradient_Attack.training_strategy('conservative')
 
-loss_fn, trainloader, validloader =  Gradient_Attack.construct_dataloaders('CIFAR10', defs)
+    loss_fn, trainloader, validloader =  Gradient_Attack.construct_dataloaders('CIFAR10', defs)
 
-#checkpoint = torch.load("/kaggle/input/fedavg-100pt/fedavg_100.pt")  # not available on github due to size restrictions
-model = resnet50(pretrained = True).to(**setup)
-#model.load_state_dict(checkpoint["model_state_dict"])
-model.eval()
+    #checkpoint = torch.load("/kaggle/input/fedavg-100pt/fedavg_100.pt")  # not available on github due to size restrictions
+    model = resnet50(pretrained = True).to(**setup)
+    #model.load_state_dict(checkpoint["model_state_dict"])
+    model.eval()
+    dm = torch.as_tensor(cifar10_mean, **setup)[:, None, None]
+    ds = torch.as_tensor(cifar10_std, **setup)[:, None, None]
+    ground_truth, labels = [], []
+    while len(labels) < num_images:
+        img, label = validloader.dataset[idx]
+        idx += 1
+        if label not in labels:
+            labels.append(torch.as_tensor((label,), device=setup['device']))
+            ground_truth.append(img.to(**setup))
+    ground_truth = torch.stack(ground_truth)
+    labels = torch.cat(labels)
 
-dm = torch.as_tensor(cifar10_mean, **setup)[:, None, None]
-ds = torch.as_tensor(cifar10_std, **setup)[:, None, None]
-
-ground_truth, labels = [], []
-idx = 0  # ?
-while len(labels) < num_images:
-    img, label = validloader.dataset[idx]
-    idx += 1
-    if label not in labels:
-        labels.append(torch.as_tensor((label,), device=setup['device']))
-        ground_truth.append(img.to(**setup))
-ground_truth = torch.stack(ground_truth)
-labels = torch.cat(labels)
-
-plot(ground_truth, filename="gt.png")
-print([validloader.dataset.classes[l] for l in labels])
+    plot(ground_truth, filename=f"gt_{idx}.png")
+    print([validloader.dataset.classes[l] for l in labels])
 
 
-model.zero_grad()
-target_loss, _, _ = loss_fn(model(ground_truth), labels)
-input_parameters = Gradient_Attack.reconstruction_algorithms.loss_steps(model, ground_truth, labels, 
-                                                        lr=local_lr, local_steps=local_steps,
-                                                                   use_updates=use_updates)
-input_parameters = [p.detach() for p in input_parameters]
+    model.zero_grad()
+    target_loss, _, _ = loss_fn(model(ground_truth), labels)
+    input_parameters = Gradient_Attack.reconstruction_algorithms.loss_steps(model, ground_truth, labels, 
+                                                            lr=local_lr, local_steps=local_steps,
+                                                                    use_updates=use_updates)
+    input_parameters = [p.detach() for p in input_parameters]
 
-config = dict(signed=True,
-              boxed=True,
-              cost_fn='sim',
-              indices='def',
-              weights='equal',
-              lr=0.01,
-              optim='sgd',
-              restarts=1,
-              max_iterations=2_000,
-              total_variation=1e-6,
-              init='randn',
-              filter='none',
-              lr_decay=True,
-              scoring_choice='loss')
+    config = dict(signed=True,
+                boxed=True,
+                cost_fn='sim',
+                indices='def',
+                weights='equal',
+                lr=0.01,
+                optim='sgd',
+                restarts=1,
+                max_iterations=2_000,
+                total_variation=1e-6,
+                init='randn',
+                filter='none',
+                lr_decay=True,
+                scoring_choice='loss')
 
-rec_machine = Gradient_Attack.FedAvgReconstructor(model, (dm, ds), local_steps, local_lr, config,
-                                             use_updates=use_updates, num_images=num_images)
-output, _ = rec_machine.reconstruct(input_parameters, labels, img_shape=(3, 32, 32))
+    rec_machine = Gradient_Attack.FedAvgReconstructor(model, (dm, ds), local_steps, local_lr, config,
+                                                use_updates=use_updates, num_images=num_images)
+    output, _ = rec_machine.reconstruct(input_parameters, labels, img_shape=(3, 32, 32))
 
-plot(output,filename="output.png")
+    plot(output,filename=f"output_{idx}.png")
 
