@@ -19,7 +19,7 @@ def plot(tensor, filename=None):
     if filename is not None:
         plt.savefig(filename, bbox_inches="tight")
 
-num_images = 1
+num_images = 3
 local_lr = 1e-2
 local_steps = 5
 use_updates = True
@@ -53,7 +53,7 @@ labels = torch.cat(labels)
 plot(ground_truth, filename="gt.png")
 print([validloader.dataset.classes[l] for l in labels])
 
-"""
+
 model.zero_grad()
 target_loss, _, _ = loss_fn(model(ground_truth), labels)
 input_parameters = Gradient_Attack.reconstruction_algorithms.loss_steps(model, ground_truth, labels, 
@@ -80,6 +80,5 @@ rec_machine = Gradient_Attack.FedAvgReconstructor(model, (dm, ds), local_steps, 
                                              use_updates=use_updates)
 output, _ = rec_machine.reconstruct(input_parameters, labels, img_shape=(3, 32, 32))
 
-plot(output)
+plot(output,filename="output.png")
 
-"""
