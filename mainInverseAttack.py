@@ -23,6 +23,8 @@ num_images = 1
 local_lr = 1e-2
 local_steps = 5
 use_updates = True
+cifar10_mean = [0.4914672374725342, 0.4822617471218109, 0.4467701315879822]
+cifar10_std = [0.24703224003314972, 0.24348513782024384, 0.26158785820007324]
 
 setup = Gradient_Attack.utils.system_startup()
 defs = Gradient_Attack.training_strategy('conservative')
@@ -34,8 +36,8 @@ model = resnet50(pretrained = True).to(**setup)
 #model.load_state_dict(checkpoint["model_state_dict"])
 model.eval()
 
-dm = torch.as_tensor(datasets.cifar10_mean, **setup)[:, None, None]
-ds = torch.as_tensor(datasets.cifar10_std, **setup)[:, None, None]
+dm = torch.as_tensor(cifar10_mean, **setup)[:, None, None]
+ds = torch.as_tensor(cifar10_std, **setup)[:, None, None]
 
 ground_truth, labels = [], []
 idx = 0  # ?
