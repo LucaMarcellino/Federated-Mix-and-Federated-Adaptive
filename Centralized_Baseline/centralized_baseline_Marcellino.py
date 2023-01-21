@@ -129,7 +129,7 @@ for norm in norm_list:
 
 
 output_data = pd.DataFrame(output_metrics)
-output_data.to_csv("Centralized_results_sgd_Marcellino.csv", index = False)
+output_data.to_csv("Centralized_results_adam_Marcellino.csv", index = False)
 
                         
 
