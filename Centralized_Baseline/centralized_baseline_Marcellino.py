@@ -16,7 +16,7 @@ g = torch.Generator()
 #INPUT PARAMETERS
 epochs = 50
 norm_list = ["Batch Norm"]#, "Group Norm"]
-opt_list = ["sgd"]#,"adam"]
+opt_list = ["adam"]#,"sgd"]
 lr_list = [0.001,0.01]
 momentum_list = [0.5,0.9]
 wd_list = [0]
