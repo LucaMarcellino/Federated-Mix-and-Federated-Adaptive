@@ -9,6 +9,7 @@ def exp_details(args):
     print(f'    Model     : {args.model}')
     print(f'    Optimizer : {args.optimizer}')
     print(f'    Learning  : {args.lr}')
+    print(f'    Momentum  : {args.momentum}')
     print(f'    Global Rounds   : {args.epochs}\n')
 
     print('Federated parameters:')
@@ -45,7 +46,7 @@ def get_dataset(args):
     #sample training
     if args.iid:
         #sample IID user
-        user_group,_ = cifar_iid(train_dataset,args.num_users)
+        user_group = cifar_iid(train_dataset,args.num_users)
     elif args.iid == 0 and args.unequal == 0:
         #sample Non-IID user
         user_group,_ = cifar_noniid(train_dataset,args.num_users)
