@@ -33,9 +33,7 @@ for idx in tqdm([7,15,47]):
 
     loss_fn, trainloader, validloader =  Gradient_Attack.construct_dataloaders('CIFAR10', defs)
 
-    #checkpoint = torch.load("/kaggle/input/fedavg-100pt/fedavg_100.pt")  # not available on github due to size restrictions
     model = resnet50(pretrained = True).to(**setup)
-    #model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
     dm = torch.as_tensor(cifar10_mean, **setup)[:, None, None]
     ds = torch.as_tensor(cifar10_std, **setup)[:, None, None]
