@@ -24,17 +24,18 @@ Baseed on the implementation in https://github.com/AshwinRJ/Federated-Learning-P
 
 
 class LocalUpdate(object):
-    def __init__(self, dataset, idxs, device, local_batch_size, local_epochs, worker_init_fn, generator):
+    def __init__(self, dataset, idxs, device, local_batch_size, local_epochs, worker_init_fn, generator, args):
         self.trainloader = DataLoader(DatasetSplit(dataset, idxs), batch_size=local_batch_size, shuffle=True, worker_init_fn=worker_init_fn, generator=generator)
         self.device = 'cuda' if device else 'cpu'
         self.local_epochs = local_epochs
         self.criterion = nn.CrossEntropyLoss()
+        self.args = args
 
     def update_weights(self, model, lr):
         model.train()
         epoch_loss = []
 
-        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.5)
+        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=self.args.momentum)
 
         for iter in range(self.local_epochs):
             batch_loss = []
