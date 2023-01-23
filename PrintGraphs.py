@@ -279,7 +279,7 @@ dataAvgBN = pd.read_csv(r'Results\FedADP_unbalanced_results\FedAVG_5_local_ep_No
 dataAvgGN = pd.read_csv(r'Results\FedADP_unbalanced_results\FedAVG_5_local_ep_Norm_Group Norm_iid_0_unbalanced_1_lr_0.01_mom_0.5_epochs_50.csv')
 dataMix025075 = pd.read_csv(r"Results\FedADP_unbalanced_results\FedMix_5_local_ep_iid_0_unbalanced_1_lr_0.01_mom_0.5_epochs_50_alphaB_0.25_alphaG_0.75.csv")
 dataMix0109 = pd.read_csv(r"Results\FedADP_unbalanced_results\FedMix_5_local_ep_iid_0_unbalanced_1_lr_0.01_mom_0.5_epochs_50_alphaB_0.1_alphaG_0.9.csv")
-dataMix0010 = pd.read_csv(r"Results\FedADP_unbalanced_results\FedMix_5_local_ep_iid 0_unbalanced 1_lr 0.01_mom 0.5_epochs 50_alphaB 0.5_alphaG 0.5.csv")
+dataMix0010 = pd.read_csv(r"Results\FedADP_unbalanced_results\FedMix_5_local_ep_iid 0_unbalanced 1_lr 0.01_mom 0.5_epochs 50_alphaB 0.0_alphaG 1.0.csv")
 dataMix0505 = pd.read_csv(r"Results\FedADP_unbalanced_results\FedMix_5_local_ep_iid 0_unbalanced 1_lr 0.01_mom 0.5_epochs 50_alphaB 0.5_alphaG 0.5.csv")
 dataMix1000 = pd.read_csv(r"Results\FedADP_unbalanced_results\FedMix_5_local_ep_iid 0_unbalanced 1_lr 0.01_mom 0.5_epochs 50_alphaB 1.0_alphaG 0.0.csv")
 
