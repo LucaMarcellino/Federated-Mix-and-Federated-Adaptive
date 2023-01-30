@@ -12,6 +12,15 @@
 \usepackage{tabularx}
 \usepackage{relsize}
 \usepackage{float}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -41,7 +50,7 @@ s306073@studenti.polito.it}
 
 
 \begin{abstract}
-In this work we tried two possible new scenarios related to the Federated Learning setting. Indeed we studied a new approach to compute normalization, based on a linear combination of the normalization weight from the Batch Norm and the Group Norm, we have tried it in different models. Then we tried, also, to figure out a framework in which is possible adjust the memory that we want to allocate to the training phase based on the device on which the model is executed. Moreover in this case is also possible to leave the choice to the user on how much memory he wants to allocate for this kind of task. We called this two methods Federated Mix (\textbf{FedMix}), since we mix two kinds of normalization, and Federate Adaptive (\textbf{FedAdp}), since we will have different batch sizes (user based) and the normalization layers will adapt based on the latter.
+In this work, we tried two possible new scenarios related to the Federated Learning setting. Indeed we studied a new approach to computing normalization, based on a linear combination of the normalization weight from the Batch Norm and the Group Norm, we have tried it in different models. Subsequently, we tried to figure out a framework in which is possible to adjust the memory that we want to allocate to the training phase based on the device on which the model is executed. Moreover in this case is also possible to leave the choice to the user on how much memory he wants to allocate for this kind of task. We called these two methods Federated Mix (\textbf{FedMix}), since we mix two kinds of normalization, and Federate Adaptive (\textbf{FedAdp}), since we will have different batch sizes (user based) and the normalization layers will adapt based on the latter. You can find all the code used at: \href{https://github.com/LucaMarcellino/Federated-Mix-and-Federated-Adaptive}{Repository}
 \end{abstract}
 
 
@@ -52,22 +61,22 @@ Federated learning is a method of training machine learning models on large amou
 
 Federated learning allows organizations to train models on sensitive data without compromising the privacy of individuals, and it allows organizations to train models on a larger and more diverse dataset than would be possible with a single device or server. Federated learning has the potential to revolutionize the way organizations approach data processing and machine learning\cite{b1}.
 
-In this scenario, we decided to try out two different implementations. One of them is at the level of the ResNet50 structure, in fact we decided to perform a linear combination of the Batch and Group norm. In the second, we decided to allocate different sizes of memory to the clients, and see which normalisation worked best.
+In this scenario, we decided to try out two different implementations. One of them is at the level of the ResNet50 structure we decided to perform a linear combination of the Batch and Group norm. In the second, we decided to allocate different sizes of memory to the clients, and see which normalization worked best.
 
 We tested our code in the area of image recognition divided into 10 classes (CIFAR10). In addition, both IID and Non-IID balanced/unbalanced settings were tested.
 
 \section{Related Work}
 
-Several approaches related to Federated Learning have emerged in recent years. Our experiments were based on the combination of two normalisations. The first Batch Norm \cite{b2} is best in the case of IID settings or when we have high batch sizes. Since as soon as we deviate from the conditions mentioned above, we no longer have the desired results, we decided to also try the Gruop Norm \cite{b3}. The latter turned out to have better effects in the case of Non-IID and smaller batch sizes.
+Several approaches related to Federated Learning have emerged in recent years. Our experiments were based on the combination of two normalizations. The first Batch Norm \cite{b2} is best in the case of IID settings or when we have high batch sizes. Since as soon as we deviate from the conditions mentioned above, we no longer have the desired results, we decided to also try the Group Norm \cite{b3}. The latter turned out to have better effects in the case of Non-IID and smaller batch sizes.
 
-With regard to the methods used in Federated Learning, various approaches famous in the literature and implementations were used to test our new normalisation method. The first one tested was the Federated Average (FedAvg) \cite{b4} in which weights are averaged for server uploads. Subsequently, the Federated Group Knowledge Transfer (FedGKT)\cite{b5}  was also tested, which is a process by which knowledge and expertise is shared and exchanged between different groups or organisations within a larger federation or network.
+Concerning the methods used in Federated Learning, various approaches famous in the literature and implementations were used to test our new normalization method. The first one tested was the Federated Average (FedAvg) \cite{b4} in which weights are averaged for server uploads. Subsequently, the Federated Group Knowledge Transfer (FedGKT)\cite{b5}  was also tested, which is a process by which knowledge and expertise are shared and exchanged between different groups or organizations within a larger federation or network.
 
 As an architecture, instead, a ResNet50 \cite{b6} was used with a few modifications related to the type of method used for uploading to the central server. In fact, in the case of FedGKT, the architectures used were ResNet8 for the client and ResNet49 for the server. 
 
 Finally, a network attack test was also carried out in which a Gradient Inverse Attack \cite{b7} was tested. With this approach, one tries, through weights, to derive the initial image and thus violate privacy.
 
 \subsection{Database}
-To test the algorithms we used CIFAR-10 that is a dataset of 60,000 32x32 color images in 10 classes, with 6,000 images per class. The classes are airplane, automobile, bird, cat, deer, dog, frog, horse, ship, and truck. It is commonly used as a benchmark for image classification and computer vision models. CIFAR-10 was developed by the Canadian Institute for Advanced Research (CIFAR) and is widely used in research and education.
+To test the algorithms we used CIFAR-10 which is a dataset of 60,000 32x32 color images in 10 classes, with 6,000 images per class. The classes are airplane, automobile, bird, cat, deer, dog, frog, horse, ship, and truck. It is commonly used as a benchmark for image classification and computer vision models. CIFAR-10 was developed by the Canadian Institute for Advanced Research (CIFAR) and is widely used in research and education.
 
 \section{Methods}
 
@@ -100,19 +109,28 @@ Where $k \in [1,d]$.
 
 \subsection{Group Normalization}
 
-Group normalization is a variant of batch normalization, which is a technique used to improve the performance and stability of deep learning models.Also group normalization is used to normalize the activations of the layers in a neural network, which can help to reduce overfitting and improve the generalization of the model to new data. 
+Group normalization is a variant of batch normalization, which is a technique used to improve the performance and stability of deep learning models. Also, group normalization is used to normalize the activations of the layers in a neural network, which can help to reduce overfitting and improve the generalization of the model to new data. 
 
-Again, the basic idea is to subtract the mean and divide by the standard deviation. This time, however, the normalisation takes place on channel groups instead of bacth size. So GN computations is independent of batch sizes, and its accuracy is stable in a wide range of batch sizes.
+Again, the basic idea is to subtract the mean and divide it by the standard deviation. This time, however, the normalization takes place on channel groups instead of batch size. So GN computations are independent of batch sizes, and their accuracy is stable in a wide range of batch sizes.
 
-One advantage of group normalization compared to batch normalization is that it can be more computationally efficient, since it does not require the use of mini-batches. Moreover BN’s error increases rapidly when the batch size becomes smaller, caused by inaccurate batch statistics estimation. However, it may not be as effective as batch normalization in some cases, especially when the groups are too small or the data is highly correlated.
+One advantage of group normalization compared to batch normalization is that it can be more computationally efficient since it does not require the use of mini-batches. Moreover, BN’s error increases rapidly when the batch size becomes smaller, caused by inaccurate batch statistics estimation. However, it may not be as effective as batch normalization in some cases, especially when the groups are too small or the data is highly correlated.
+
+\subsection{Gradient Inverse Attack}
+A Gradient inversion attack is a method to reconstruct an original image from a neural network. The neural network is trained to process an input image and produce an output, such as a label or classification. The gradients of the neural network's output with respect to its input are used to iteratively generate an image that will produce the desired output.
+
+The process of gradient inversion attack starts with an initial random image as input, then using the gradients of the neural network's output concerning the input image to update the input image. The updated image is then fed again into the neural network, and the process is repeated until the output of the neural network matches the desired output.
+
+For example, if the neural network is trained to classify images of cats and dogs, an attacker could use a gradient inversion attack to reconstruct an image of a cat from the neural network's output of "cat" by iteratively updating an initial random image until the network classifies it as a cat.
+
+To protect against gradient inversion attacks, techniques such as data randomization and adversarial training can be used. Data randomization is a technique that adds noise to the input image, which makes it more difficult for the attacker to reconstruct the original image. Adversarial training is a technique that trains the neural network on "adversarial examples" which are crafted inputs that are specifically designed to fool the neural network.
 
 \subsection{\textbf{Federated Mix}}
 
-The Federated Mix stems from the idea of the limitations mentioned above. In fact, as mentioned above, Batch normalisation does not have accurate results if the number of batches goes down but at the same time at high batches it achieves higher levels of accuracy. 
+The Federated Mix stems from the idea of the limitations mentioned above. As mentioned above, Batch normalization does not have accurate results if the number of batches goes down but at the same time at high batches, it achieves higher levels of accuracy. 
 
-In addition, we realised that the performance of the two methods changed depending on the distribution of the data. In fact, Group normalisation performed better if the dataset was Non-IID unbalanced. In contrast, Batch normalisation worked better in the case of an IID, and therefore, balanced dataset.
+In addition, we realized that the performance of the two methods changed depending on the distribution of the data. Group normalization performed better if the dataset was Non-IID unbalanced. In contrast, Batch normalization worked better in the case of an IID, and therefore, a balanced dataset.
 
-Based on these assumptions, we decided to try to implement a neural network that could encapsulate both normalisation and take advantage of them. To do this, we decided to perform a linear combination of the two normalisation through two coefficients alpha\_b ($\alpha_b$) and alpha\_g ($\alpha_g$). 
+Based on these assumptions, we decided to try to implement a neural network that could encapsulate both normalization and take advantage of them. To do this, we decided to perform a linear combination of the two normalizations through two coefficients alpha\_b ($\alpha_b$) and alpha\_g ($\alpha_g$). 
 
 \begin{equation}
     x = \alpha_b \cdot~ BN(x) + \alpha_g \cdot~ GN(x)
@@ -124,14 +142,14 @@ Subsequently, we looked for which values of $\alpha_b$ and $\alpha_g$ maximised 
 
 Federated Adaptive (FedAdp) stems from the very idea of Federated Learning. In fact, the idea of this method is to focus on the memory used by the client in its model training process. In the more specific case of all clients, they can either choose the memory to be dedicated to training, or the device itself can communicate the memory it can dedicate based on the user's use of the device. 
 
-We have called this method "Adaptive" because according to the memory dedicated by the device, and thus, the number of images per batch, the model decides whether to perform Batch or Group normalisation. In order to do this, we have, for the clients, a ResNet implemented as in the case of FedMix, in which the two coefficients will be set to 0 depending on which normalisation we want to use.
+We have called this method "Adaptive" because according to the memory dedicated by the device, and thus, the number of images per batch, the model decides whether to perform Batch or Group normalization. In order to do this, we have, for the clients, a ResNet implemented as in the case of FedMix, in which the two coefficients will be set to 0 depending on which normalization we want to use.
 
-If from the client's point of view everything seems to be simple enough, the problems come from the server side. In fact, in this case we decided to test our idea by following the FedAvg model and then use the average of the weights. At this point, however, we decided to also use the FedMix model for the server and went looking for $\alpha_b$ and $\alpha_g$ parameters that would improve accuracy.
+If from the client's point of view, everything seems to be simple enough, the problems come from the server side. In fact, in this case, we decided to test our idea by following the FedAvg model and then using the average of the weights. At this point, however, we decided to also use the FedMix model for the server and went looking for $\alpha_b$ and $\alpha_g$ parameters that would improve accuracy.
 \section{Results}
 \subsection{Centralized Experiment}
-The performance of any model trained in a federated fashion is upper bounded by the results obtained in the centralized setting, i.e. the standard one. We therefore decided to test the ResNet-50 and the model itself as the first things on the centralised. We also decided to tune the parameters within these experiments. The tuned parameters were: learning rate, momentum and optimizer. As far as the weight decay is concerned, we fixed it at 0 due to computational power, but we have seen, also through other experiments in the papers, that it is the best choice.
+The performance of any model trained in a federated fashion is upper bound by the results obtained in the centralized setting, i.e. the standard one. We, therefore, decided to test the ResNet-50 and the model itself as the first things on the centralized. We also decided to tune the parameters within these experiments. The tuned parameters were: learning rate, momentum, and optimizer. As far as the weight decay is concerned, we fixed it at 0 due to computational power, but we have seen, also through other experiments in the papers, that it is the best choice.
 
-In the table here, there are the results we decided to take into account. We decided not to use Adam as an optimizer for two main reasons: the first is that in the case of group norm SGD gives better results (Table \ref{tab:1} in the appendix), second because it needs a larger memory and our resources are limited. It might however be a good experiment to test the results also with Adam as an optimizer.
+In the table here, there are the results we decided to take into account. We decided not to use Adam as an optimizer for two main reasons: the first is that in the case of group norm SGD gives better results (Table \ref{tab:1} in the appendix), and the second because it needs a larger memory and our resources are limited. It might however be a good experiment to test the results also with Adam as an optimizer.
 \begin{table}[H]
 \begin{tabular}{|p{0.15\columnwidth}|p{0.15\columnwidth}|p{0.15\columnwidth}|p{0.15\columnwidth}|p{0.15\columnwidth}|}
 \hline
@@ -166,32 +184,32 @@ As mentioned earlier, we decided to test the two implementations on FedAvg as we
 \rule[-4mm]{0mm}{1cm} {Non-IID} & \centerline{0.1} & \centerline{0.9} & \centerline{SGD} & \centerline{17.1}\\\hline
 \end{tabular}
 \end{table}
-Looking at the results, one can immediately see how the trends are completely reversed. This is because it is not mandatory that the parameters that work best in centralized also work best in FedAvg. Given these results, we decided to run each of our experiments with momentum equal to 0.5, learning rate equal to 0.1 and SGD as the optimizer.
+Looking at the results, one can immediately see how the trends are completely reversed. This is because it is not mandatory that the parameters that work best in centralized also work best in FedAvg. Given these results, we decided to run each of our experiments with a momentum equal to 0.5, a learning rate equal to 0.1, and SGD as the optimizer.
 
 \subsection{Experiment Settings}
 To carry out the experiments, we used the Kaggle GPU P100. Each method was tested in several possible scenarios.
 
-In the FedAvg part, 50 total epochs and 5 local epochs were tested, the local batch size was set at 16. For this method, both the ResNet 50 with batch and group normalisation and the ResNet 50 with the linear combination of normalisations (FedMix) were tested.
+In the FedAvg part, 50 total epochs and 5 local epochs were tested, and the local batch size was set at 16. For this method, both the ResNet 50 with batch and group normalization and the ResNet 50 with the linear combination of normalizations (FedMix) were tested.
 
-For the FedGKT, on the other hand, 50 communications rounds were carried out with 10 local epochs, server side, and 1 epoch, client side. The local batch size was tested at both 128 and 16. Again, this was tested with both the ResNet 50 and the setting in FedMix.
+For the FedGKT, on the other hand, 50 communications rounds were carried out with 10 local epochs, on the server side, and 1 epoch, on the client side. The local batch size was tested at both 128 and 16. Again, this was tested with both the ResNet 50 and the setting in FedMix.
 
 Finally, we also tested the new FedAdp method. In this case, the weight update method is still a FedAvg. Again, this was tested for 50 total epochs and 5 local epochs. As far as the batch size is concerned, more information will be given in the subsection with the results.
 
 \subsection{Gradient Inverse Attack Experiments}
-To test privacy we decided to try an attack on our own network. To do this, we used a pretrained ResNet-50, on ImageNet, so that we could test whether this neural network could accurately defend privacy. We then performed a gradient inverse attack by verifying it on a FedAvg type algorithm.
-Logically, to the attack was given the correct parameters of our model and was tested for 8000 iterations. In order to verify what has just been said, we decided to test it on three photos belonging to different classes: frog, boat and truck. 
+To test privacy we decided to try an attack on our network. To do this, we used a pre-trained ResNet-50, on ImageNet, so that we could test whether this neural network could accurately defend privacy. We then performed a gradient inverse attack by verifying it on a FedAvg-type algorithm.
+Logically, the attack was given the correct parameters of our model and was tested for 8000 iterations. To verify what has just been said, we decided to test it on three photos belonging to different classes: frog, boat, and truck. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{Images/Comparison inverse attack.jpg}
     \caption{Original and reconstruct figures}
     \label{fig:1}
 \end{figure}
-Looking at the origin and reconstructed images, similarities can be seen, but they are still really difficult to recognize, so we believe that ResNet-50 is a fairly safe neural network.
+Looking at the original and reconstructed images, similarities can be seen, but they are still really difficult to recognize, so we believe that ResNet-50 is a fairly safe neural network.
 
 \subsection{FedMix Experiments}
 To carry out these experiments, we decided to set the local batch size equal to 16.
 
-The first test performed is the comparison between FedMix and FedAvg in IID settings. 
+The first test performed is the comparison between FedMix and FedAvg in \textbf{IID} settings. 
 \begin{table}[H]
 \begin{tabular}{|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|}
 \hline
@@ -204,7 +222,7 @@ The first test performed is the comparison between FedMix and FedAvg in IID sett
 {\textbf{\begin{tabular}[c]{@{}c@{}c@{}}Test \\ Accuracy \\(\%)\end{tabular}}} & \rule[-4mm]{0mm}{1cm} {42.86} & \centerline{\textbf{61.51}} & \centerline{56.04} & \centerline{37.53} & \centerline{53.67}\\\hline
 \end{tabular}
 \end{table}
-In this case, our method does not show any improvement, in fact it performs worse. However, a look at the graph Fig.\ref{fig:appendix1} (in the appendix) shows that our method performs better at low epochs.
+In this case, our method does not show any improvement it performs worse. However, a look at the graph Fig.\ref{fig:appendix1} (in the appendix) shows that our method performs better at low epochs.
 
 As a second test, we tested our method in \textbf{Non-IID balanced} settings. The results obtained are as follows.
 \begin{table}[H]
@@ -220,7 +238,7 @@ As a second test, we tested our method in \textbf{Non-IID balanced} settings. Th
 \end{tabular}
 \end{table}
 
-In this case, it can be seen that our proposed method is far better. In fact, the delta between the methods is very high and at the $50^{th}$ epoch is 6\%. Looking also at the graph Fig.\ref{fig:appendix2} (in the appendix), one can see how the FedMix performs better in most epochs. 
+In this case, it can be seen that our proposed method is far better. The delta between the methods is very high and at the $50^{th}$ epoch is 6\%. Looking also at the graph Fig.\ref{fig:appendix2} (in the appendix), one can see how the FedMix performs better in most epochs. 
 
 At this point, given the results achieved on the Balanced Non-IID setting, we decided to try a more challenging option, namely the \textbf{Non-IID unbalanced}. The next table shows the results obtained.
 \begin{table}[H]
@@ -238,7 +256,7 @@ At this point, given the results achieved on the Balanced Non-IID setting, we de
 
 Again, it can be seen that the method we have devised gives better results. In this too, the gap between the two methods is 3\% after the $50^{th}$ epoch. Again, the graph showing the performance of the methods can be found in the appendix (Fig.\ref{fig:appendix3}). In this case, it can be seen that the FedMix is better in all epochs.
 
-Once these cases were finished, since the change is at the network level, we decided to test the change in the FedGKT algorithm as well. The tests were carried out both at local batch size = 16 and at local batch size = 128. The server epochs were 10 and the communications round were 50.
+Once these cases were finished, since the change is at the network level, we decided to test the change in the FedGKT algorithm as well. The tests were carried out both at local batch size = 16 and at local batch size = 128. The server epochs were 10 and the communications round was 50.
 
 Using \textbf{IID}-distributed data, the tables for 128 local batch size and 16 local batch size, respectively, are:
 \begin{table}[H]
@@ -266,9 +284,9 @@ Using \textbf{IID}-distributed data, the tables for 128 local batch size and 16 
 {\textbf{\begin{tabular}[c]{@{}c@{}c@{}}Test \\ Accuracy \\(\%)\end{tabular}}} & \rule[-4mm]{0mm}{1cm} {77.38} & \centerline{\textbf{84.47}} & \centerline{59.95} & \centerline{21.77} & \centerline{78.27}\\\hline
 \end{tabular}
 \end{table}
-As before, our combination on normalization does not benefit in this type of option. In addition, looking at the graphs in appendix (Fig.\ref{fig:appendix4} and Fig.\ref{fig:appendix5}) we can see that batch normalisation is always the best.
+As before, our combination of normalization does not benefit from this type of option. In addition, looking at the graphs in the appendix (Fig.\ref{fig:appendix4} and Fig.\ref{fig:appendix5}) we can see that batch normalization is always the best.
 
-Looking at when the distribution is \textbf{Non-IID unbalanced}, we can see how the trend does not seem to be reversing (The first table always refers to local batch size equal to 128 and the second to 16).
+Looking at when the distribution is \textbf{Non-IID unbalanced}, we can see how the trend does not seem to be reversing (The first table always refers to a local batch size equal to 128 and the second to 16).
 \begin{table}[H]
 \begin{tabular}{|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|}
 \hline
@@ -295,12 +313,12 @@ Looking at when the distribution is \textbf{Non-IID unbalanced}, we can see how 
 \end{tabular}
 \end{table}
 
-However, taking a look at the graphs in the appendix (Fig.\ref{fig:appendix6} and Fig.\ref{fig:appendix7}), one can see that there is actually no clear distinction as to which method works best. Perhaps continuing communications round the experiments would have led to more stable results. Unfortunately, due to several hours to carry out the runs, this was impossible for us to verify.
+However, taking a look at the graphs in the appendix (Fig.\ref{fig:appendix6} and Fig.\ref{fig:appendix7}), one can see that there is actually no clear distinction as to which method works best. Perhaps continuing communications around the experiments would have led to more stable results. Unfortunately, due to the several hours to carry out the runs, this was impossible for us to verify.
 
-After all these experiments, we can conclude a couple of things. The first is that when working with well-distributed data, our method of performing a linear combination of batch and gruop normalisation does not work as hoped. On the other hand, when we switch to having the data distributed according to a Non-IID distribution, the results seem to show that the method we devised is better than FedAvg. Taking a look at the FedGKT algorithm, however, I think that no real conclusions can be drawn. The only thing possible is to see that in some epochs the FedMix actually performs better. As for the coefficients, $\alpha_b$ and $\alpha_g$, it is clear from all experiments that the best combination is when the former is equal 0.1 and 0.9 for the second one.
+After all these experiments, we can conclude a couple of things. The first is that when working with well-distributed data, our method of performing a linear combination of batch and group normalization does not work as hoped. On the other hand, when we switch to having the data distributed according to a Non-IID distribution, the results seem to show that the method we devised is better than FedAvg. Taking a look at the FedGKT algorithm, however, I think that no real conclusions can be drawn. The only thing possible is to see that in some epochs the FedMix actually performs better. As for the coefficients, $\alpha_b$, and $\alpha_g$, it is clear from all experiments that the best combination is when the former is equal to 0.1 and 0.9 for the second one.
 
 \subsection{FedAdp Experiments}
-As previously described, this method aims to allow the user to choose the amount of memory, or available memory, to be dedicated to training the model. To do this, we have decided to randomly choose 100 batch size values, one for each user, from the following values [2,4,8,16,32,64]. On the server side, the chosen batch size was 16 as it is the middle ground between the possible ones. As a first experiment, we decided not to modify the FedAvg code, except for the user side batch size, testing it in all possible configurations of data, that is,\textbf{ IID}, \textbf{Non-IID balanced} and \textbf{Non-IID unbalanced} and with group and batch normalization. (In this case the server use the same clients' normalization).
+As previously described, this method aims to allow the user to choose the amount of memory, or available memory, to be dedicated to training the model. To do this, we have decided to randomly choose 100 batch size values, one for each user, from the following values [2,4,8,16,32,64]. On the server side, the chosen batch size was 16 as it is the middle ground between the possible ones. As a first experiment, we decided not to modify the FedAvg code, except for the user side batch size, testing it in all possible configurations of data, that is,\textbf{ IID}, \textbf{Non-IID balanced} and \textbf{Non-IID unbalanced} and with group and batch normalization. (In this case, the server uses the same clients' normalization).
 
 The obtained results are as follows:
 \begin{table}[H]
@@ -319,10 +337,10 @@ The obtained results are as follows:
 
 \end{tabular}
 \end{table}
-We then decided that we wanted to try to change the normalisation on the client according to the 'chosen' batch size. This is because the paper \cite{b2} shows that group normalisation has higher accuracies at low batch sizes, but if the latter are raised, the batch works better. To do this we have decided to use the ResNet-50 mix on the client, where the value of $\alpha_b$ will be equal to 0, while that of $\alpha_g$ will be equal to 1, if the batch size is less than 8 and vice versa if greater than 16. (In the discussion section, it will be explained why a ResNet-50 mix and not simply the ResNet-50 in batch or group normalisation based on the batch size value).
-The next problem that arose was how to 'aggregate' these two normalisations on the server. 
+We then decided that we wanted to try to change the normalization on the client according to the 'chosen' batch size. This is because the paper \cite{b2} shows that group normalization has higher accuracies at low batch sizes, but if the latter is raised, the batch works better. To do this we have decided to use the ResNet-50 mix on the client, where the value of $\alpha_b$ will be equal to 0, while that of $\alpha_g$ will be equal to 1 if the batch size is less than 8 and vice versa if greater than 16. (In the discussion section, it will be explained why a ResNet-50 mix and not simply the ResNet-50 in batch or group normalization based on the batch size value).
+The next problem that arose was how to 'aggregate' these two normalizations on the server. 
 
-Again, we decided to test both the FedMix and the batch and group normalisation. (The values of $\alpha_g$ and $\alpha_b$ that you will find in the following tables refer to values taken on the server and not on the client. We would also like to point out that if one of the two parameters is 1, it means that the server works entirely with that normalisation).
+Again, we decided to test both the FedMix and the batch and group normalization. (The values of $\alpha_g$ and $\alpha_b$ that you will find in the following tables refer to values taken on the server and not on the client. We would also like to point out that if one of the two parameters is 1, it means that the server works entirely with that normalization).
 
 As usual, the first experiment was carried out on data distributed in \textbf{IID} and the results are as follows:
 \begin{table}[H]
@@ -339,7 +357,7 @@ As usual, the first experiment was carried out on data distributed in \textbf{II
 \end{table}
 In this case, we see that if the server works in group normalisation, it obtains the best results, but the latter are less than 1 percentage point higher than the FedMix with $\alpha_b$ = 0.1 and $\alpha_g$ = 0.9.
 
-Subsequently, as usual, the data were also tested when distributed in Non-IID balanced and Non-IID unbalanced. The next two tables show the data in the respective methods.
+Subsequently, as usual, the data were also tested when distributed in \textbf{Non-IID balanced} and \textbf{Non-IID unbalanced}. The next two tables show the data in the respective methods.
 
 \begin{table}[H]
 \begin{tabular}{|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|}
@@ -366,7 +384,7 @@ Subsequently, as usual, the data were also tested when distributed in Non-IID ba
 {\textbf{\begin{tabular}[c]{@{}c@{}c@{}}Test \\ Accuracy \\(\%)\end{tabular}}} & \rule[-4mm]{0mm}{1cm} \textbf{16.13} & \centerline{16.10} & \centerline{14.52} & \centerline{10.06} & \centerline{12.64}\\\hline
 \end{tabular}
 \end{table}
-In the first table, we can see how the FedMix with parameters 0.1 and 0.9 actually works better than either the server completely in group normalisation, or the FedAvg case where all clients work with the same normalisation as the server. With regard to the latter comparison, the case of Non-IID balanced, is the only case where it is in favour of changing the normalisation according to the number of batches.
+In the first table, we can see how the FedMix with parameters 0.1 and 0.9 actually works better than either the server completely in group normalization or the FedAvg case where all clients work with the same normalization as the server. With regard to the latter comparison, the case of Non-IID balanced is the only case where it is in favor of changing the normalization according to the number of batches.
 
 As for the unbalanced case, on the other hand, it is clear that when the server works entirely in groups, it achieves higher accuracy.
 
@@ -375,34 +393,34 @@ Again, the graphs of the results are added as appendices respectively Fig.\ref{f
 \section{Discussion}
 
 \subsection{General Discussion}
-Before starting the actual discussions on the two methods we decided to implement, we would like to point out a couple of things. Due to time and computational calculations, the experiments described above were carried out for a single seed and with fixed parameters such as the number of clients (fixed at 100) or the fraction for the FedGKT (fixed at 0.1). In order to verify the veracity of the results, it would be better to carry out the experiments on as many scenarios as possible, also performing confidence intervals where necessary. Another very interesting thing to evaluate would also be the change in batch size, in fact this could greatly influence the results, so it would be advisable to carry out experiments with real values and not just theoretical ones.
+Before starting the actual discussions on the two methods we decided to implement, we would like to point out a couple of things. Due to time and computational calculations, the experiments described above were carried out for a single seed and with fixed parameters such as the number of clients (fixed at 100) or the fraction for the FedGKT (fixed at 0.1), moreover, the test is run for 50 epochs and could be interesting look if the trend is confirmed also for more epochs. In order to verify the veracity of the results, it would be better to carry out the experiments on as many scenarios as possible, also performing confidence intervals where necessary. Another very interesting thing to evaluate would also be the change in batch size this could greatly influence the results, so it would be advisable to carry out experiments with real values and not just theoretical ones.
 
 \subsection{Federated Mix Discussion}
-We decided to try this method in the hope of being able to overcome the weaknesses of the two normalisation methods and at the same time try to generalise as much as possible. In our case, we have used a linear combination of the two but, clearly, this is not the only way to combine two variables. 
+We decided to try this method in the hope of being able to overcome the weaknesses of the two normalization methods and at the same time try to generalize as much as possible. In our case, we have used a linear combination of the two but, clearly, this is not the only way to combine two variables. 
 
-Regarding the results obtained, we would like to emphasise, how the mix of the two normalizations brings real advantages in the case of Non-IID. In fact, we note that the results on the test are actually better than the FedAvg. It can also be seen that when the group normalisation is predominant, the results are better in the combination. This, according to our hypothesis, may be due to the greater stability of the normalisation or to the low batch size that favours group over batch. In fact, we note that in almost all cases the optimal values of $\alpha_b$ and $\alpha_g$ are 0.1 and 0.9 respectively.
+Regarding the results obtained, we would like to emphasise, how the mix of the two normalizations brings real advantages in the case of Non-IID. In fact, we note that the results on the test are actually better than the FedAvg. It can also be seen that when the group normalisation is predominant, the results are better in the combination. This, according to our hypothesis, may be due to the greater stability of the normalisation or to the low batch size that favours group over batch. In fact, we note that in almost all cases the optimal values of $\alpha_b$ and $\alpha_g$ are 0.1 and 0.9 respectively. In addition, looking at the table \ref{tab:2} in the appendix (the number inside the cells is the test accuracy in \%), we see that this method comes out on top in two out of three cases out of all the methods tested. 
 
-Focusing, however, on the parameter values, we can certainly state one thing. Our parameters have been tested in a systematic manner. In this case, we think that progress can be made in future research. In fact, these can be chosen in other ways such as: through a more detailed grid search, search algorithms (e.g. genetic algorithm, reinforcement learning etc.) or by passing the parameters themselves to the network which will search for the best values.
+Focusing, however, on the parameter values, we can certainly state one thing. Our parameters have been tested systematically. In this case, we think that progress can be made in future research. In fact, these can be chosen in other ways such as: through a more detailed grid search, search algorithms (e.g. genetic algorithm, reinforcement learning, etc.), or bypassing the parameters themselves to the network which will search for the best values.
 
-As a final point, we would like to point out that this is a generalisation and not a modification in its entirety. In fact, if the values of the parameters $\alpha_g$ or $\alpha_b$ were equal to 0, the neural network would work with classical normalizations. We think, therefore, that this idea can be very useful because it gives more choice without precluding anything that already exists.
+As a final point, we would like to point out that this is a generalization and not a modification in its entirety. If the values of the parameters $\alpha_g$ or $\alpha_b$ were equal to 0, the neural network would work with classical normalizations. We think, therefore, that this idea can be very useful because it gives more choices without precluding anything that already exists.
 
 \subsection{Federated Adaptive Discussion}
-As far as Federated Adaptive is concerned, on the other hand, we thought of a generalisation across devices. In fact, in this case, by being able to change the batch size according to the device, it is possible to relate those that are clients of different types, such as PCs, mobile phones and perhaps in the future even self-driving cars. The basic idea then was to have the largest number of updates on the server. 
+As far as Federated Adaptive is concerned, on the other hand, we thought of a generalization across devices. In fact, in this case, by being able to change the batch size according to the device, it is possible to relate those that are clients of different types, such as PCs, mobile phones, and perhaps in the future even self-driving cars. The basic idea then was to have the largest number of updates on the server. 
 
-However, we would like to point out that the model was tested with only one type of database and only 100 clients, so we do not know whether the increase in classes, due to different devices with different domains, or the increase in clients would really lead to an increase in accuracy.
+However, we would like to point out that the model was tested with only one type of database and only 100 clients, so we do not know whether the increase in classes, due to different devices with different domains, or the increase in clients would rarely lead to an increase in accuracy.
 
-As described in the experiments a mix-type neural network was implemented at the clients. This was done because in our original idea we wanted to test different values not only on the server but also on the client. This was not possible due to the high computation time. However, we would like to point out that the discussions made on FedMix also apply here. In fact, even in this case the choice of parameters may not be deterministic but entrusted to an algorithm.
+As described in the experiments a mix-type neural network was implemented for the clients. This was done because, in our original idea, we wanted to test different values not only on the server but also on the client. This was not possible due to the high computation time. However, we would like to point out that the discussions made on FedMix also apply here. Even in this case, the choice of parameters may not be deterministic but entrusted to an algorithm.
 
 As far as the results are concerned, we would like to make two different discussions: one related to the results on the FedAvg, i.e. without adding the linear combination either on the server or on the client, and one related to the possibility of implementing the FedMix here too.
 
 With regard to the first, we would like to note that the results obtained do not differ from the results obtained where we do not implement different values for the batch size (except in the case of data distributed in IID). in fact, the values differ by less than one percentage point. We can state, with this setting, that actually mixing different devices may not lead to a deterioration in accuracy but certainly to a lower expenditure of computation for the clients.
 
-On the other hand, for the second discussion, we would like to emphasise what was said earlier. Here, the results obtained are not comparable with those obtained where no linear combinations are made, except in the case of data distributed in a Non-IID balanced manner. However, the values of $\alpha_b$ and $\alpha_g$ are fixed at 0 or 1. It would be interesting to see if when these values change, the accuracy values also change.
+On the other hand, for the second discussion, we would like to emphasize what was said earlier. Here, the results obtained are not comparable with those obtained where no linear combinations are made, except in the case of data distributed in a Non-IID balanced manner. However, the values of $\alpha_b$ and $\alpha_g$ are fixed at 0 or 1. It would be interesting to see if when these values change, the accuracy values also change.
 
 \subsection{Final Discussion and Possible Future Works}
-affect, in a clear way, what the accuracy is. In addition, we noticed how, depending on how the data are distributed, it changes which one performs better. Our work on FedMix, then, we hope can be the basis, in the future, for methods that can choose for themselves which of the two to use and. why not, perhaps even make a combination of the two.
+During our experiments, we noticed how the type of normalization, batch or group, can, together with the batch size, influence the overall performances of the algorithm. In addition, we noticed how, depending data are distributed, the type of normalization can change the performance of the model. Our work on FedMix, then, we hope can be the basis, in the future, for methods that can choose for themselves which of the two to use and, why not, perhaps even make a combination of the two.
 
-Regarding the FedAdp method is also a basis for hoping that in the future most devices will be put in communication with each other, leaving freedom to the client to choose how much computation to use or letting the algorithm choose when and how much to use depending on the user. 
+Regarding the FedAdp method is also a basis for hoping that in the future most devices will be put in communication with each other, leaving freedom to the client to choose how much computation to use or letting the algorithm choose when and how much to use depending on the user and the device. 
 
 We conclude by saying that we hope that this research will be the basis for improving methods already in the literature and hope that future work will lead to better accuracy of methods with as little computation as possible.
 
@@ -518,6 +536,28 @@ arXiv:1512.03385 (2015).
 \rule[-4mm]{0mm}{1cm} {GN} & \centerline{0.1} & \centerline{0.9} & \centerline{Adam} & \centerline{77.0}\\\hline
 \end{tabular}
 \label{tab:1}
+\end{table}
+
+\begin{table}[htb]
+\caption{Comparison between methods related to data distribution}
+\begin{tabular}{|p{0.15\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|p{0.12\columnwidth}|}
+\hline
+& {\textbf{\begin{tabular}[c]{@{}c@{}c@{}}FedMix\\ $\alpha_b$=0.1 \\ $\alpha_g$=0.9\end{tabular}}} 
+& {\textbf{\begin{tabular}[c]{@{}c@{}c@{}}FedAvg \end{tabular}}}
+& {\textbf{\begin{tabular}[c]{@{}c@{}c@{}}FedGKT \end{tabular}}}
+& {\textbf{\begin{tabular}[c]{@{}c@{}c@{}}FedADP \end{tabular}}} 
+& {\textbf{\begin{tabular}[c]{@{}c@{}c@{}}Best \\Method\end{tabular}}} \\ \hline
+
+
+
+{\textbf{IID}} & \rule[-4mm]{0mm}{1cm} {53.67} & \centerline{61.51} & \centerline{\textbf{84.47}} & \centerline{38.45} & \centerline{\textbf{FedGKT}}\\\hline
+
+{\textbf{\begin{tabular}[c]{@{}c@{}}Non-IID \\ Balanced \end{tabular}}} & \rule[-4mm]{0mm}{1cm} {\textbf{25.99}} & \centerline{19.52} &\centerline{{\begin{tabular}[c]{@{}c@{}c@{}}Not \\Tested\end{tabular}}}& \centerline{18.18} & \centerline{\textbf{FedMixAvg}}\\\hline
+
+{\textbf{\begin{tabular}[c]{@{}c@{}c@{}}Non-IID \\ Unbalanced\end{tabular}}} & \rule[-4mm]{0mm}{1cm} {\textbf{27.22}} & \centerline{22.99} & \centerline{26.46} & \centerline{22.35} & \centerline{\textbf{FedMixAvg}}\\\hline
+
+\end{tabular}
+\label{tab:2}
 \end{table}
 
 
